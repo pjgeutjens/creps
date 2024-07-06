@@ -1,11 +1,6 @@
 <script lang="ts">
+    import { sequence } from "@sveltejs/kit/hooks";
     import { tick } from "svelte";
-    let words = `
-export const test = () => {
-  return x;
-};
-  `.trim();
-    let letterCorrectness = new Array(words.length).fill(State.REMAINING);
     let currentWordIndex = 0;
     let currentLetterIndex = 0;
     let currentInput = "";
@@ -17,10 +12,9 @@ export const test = () => {
     let duration = 0;
     let accuracy = "";
     let wpm = "";
-
-    type Part = {
-        character: string;
-        state: State;
+    let game_state: any = {
+        position: 0,
+        sequence: [],
     };
 
     enum State {
@@ -31,86 +25,295 @@ export const test = () => {
         SEMI = "semi",
     }
 
+    type Part = {
+        character: string;
+        state: State;
+    };
+
+    type GameState = {
+        position: number;
+        sequence: Part[];
+        text: string;
+        get_current: () => Part;
+        get_next: () => Part;
+        get_at: (position: number) => Part;
+        letter_count: number,
+        word_count: number,
+        start_time: number | null,
+        done: () => void,
+        error_pos: Set<number>,
+        was_skipped: false,
+        first: true,
+    };
+
+    type Settings = {
+        ignoreSemicolon: boolean;
+    };
+
+    const game_settings: Settings = {
+        ignoreSemicolon: false,
+    };
+
+    const lowerCaseLetters = [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+    ];
+    const upperCaseLetters = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+    ];
+    const numbersZeroToNine = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    ];
+    const selectedSpecialCharacters = [
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        "+",
+        "-",
+        ".",
+        "~",
+        "|",
+        "<",
+        ">",
+        "=",
+        "-",
+        "_",
+        "/",
+        ":",
+        ";",
+        "?",
+        "[",
+        "]",
+        "{",
+        "}",
+        "~",
+    ];
+    const allCharacters = lowerCaseLetters
+        .concat(upperCaseLetters)
+        .concat(numbersZeroToNine)
+        .concat(selectedSpecialCharacters);
+    const alphabet = new Set(allCharacters.concat([" "]));
+
+    let text = `
+export const test = () => {
+  return x;
+};
+  `.trim()
+
     async function startGame() {
         showStatsOverlay = false;
-        letterCorrectness = new Array(words.length).fill(State.REMAINING);
-        currentWordIndex = 0;
-        currentLetterIndex = 0;
         gameActive = true;
-        startTime = new Date().getTime();
-        currentWordIndex = 0;
-        currentInput = "";
-        correctWords = 0;
-        await tick();
-        inputElement.focus();
-        let duration = 0;
+        game_state = {
+            position: 0,
+            
+            sequence: Array.from(text).map((character: string) => ({
+                character,
+                state: State.REMAINING,
+            })),
+            letterCorrectness: new Array(text.length).fill(State.REMAINING),
+            get_current: () => game_state.sequence[game_state.position],
+            get_next: () => game_state.sequence[game_state.position + 1],
+            get_at: (position: number) => game_state.sequence[position],
+            letter_count: text.length,
+            word_count: 0,
+            done: () => {},
+            start_time: null,
+            error_pos: new Set(),
+            was_skipped: false,
+            first: true,
+        };
+
+        // showStatsOverlay = false;
+        // currentWordIndex = 0;
+        // currentLetterIndex = 0;
+        // gameActive = true;
+        // startTime = new Date().getTime();
+        // currentWordIndex = 0;
+        // currentInput = "";
+        // correctWords = 0;
+        // // await tick();
+        // // inputElement.focus();
+        // let duration = 0;
     }
 
-    async function handleInput(event) {
-        if (!gameActive) return;
-
-        if (currentLetterIndex >= words.length) {
-            endGame();
-            return;
-        }
-
-        if (currentLetterIndex == -1) {
-            currentLetterIndex = 0;
-            return;
-        }
-
-        const keyPressed = event.key;
-
-        if (keyPressed === "Shift" || keyPressed === "Control") {
-            return;
-        }
-
-        if (keyPressed === "{") {
-            console.log("curly");
-            if (words[currentLetterIndex] === "{") {
-                letterCorrectness[currentLetterIndex] = State.CORRECT;
-            } else {
-                console.log("incorrect", words[currentLetterIndex]);
-                letterCorrectness[currentLetterIndex] = State.INCORRECT;
+    function onkeydown(e: KeyboardEvent) {
+        let current, next
+        console.log("onKyeDown", e.key);
+        // game_state.sequence.forEach((element) =>
+        //   // console.log(element.character, "->", element.character.charCodeAt(0), element.character.length, "->",  element.state),
+        // );
+        e.preventDefault();
+        // const key = e.key.toLowerCase();
+        console.log(e.key);
+        console.log("position:", game_state.position);
+        const last_position = game_state.position;
+        if (e.key.toLowerCase() === "backspace") {
+            console.log("processing backspace");
+            if (game_state.position > 0) {
+                game_state.position--;
+                game_state.sequence[game_state.position].state =
+                    State.REMAINING;
+            }
+        } else if (e.key.toLowerCase() === "enter") {
+            console.log("processing enter");
+            let current = game_state.get_current();
+            let next = game_state.get_next();
+            console.log(current, next);
+            if (!next || !current) {
+                game_state.position++;
+                if (game_state.position >= game_state.sequence.length) {
+                    game_state.word_count++;
+                    endGame();
+                }
+            }
+            if (current.character === ";") {
+                switch (game_settings.ignoreSemicolon) {
+                    case true:
+                        console.log("IGNORING SEMICOLON");
+                        current.state = State.SEMI;
+                        game_state.position++;
+                        break;
+                    case false:
+                        console.log("ERROR SEMICOLON");
+                        current.state = State.INCORRECT;
+                        game_state.error_pos.add(game_state.position);
+                        game_state.position++;
+                        break;
+                }
+                current = game_state.get_current();
+                next = game_state.get_next();
             }
 
-            let nextLetter = words[currentLetterIndex++];
             while (
-                !nextLetter.match(/[a-zA-Z]/) &&
-                currentLetterIndex < words.length
+                (current && current.character.charCodeAt(0) === 10) ||
+                current.character.charCodeAt(0) === 32 ||
+                current.character === " "
             ) {
-                event.preventDefault();
-                letterCorrectness[currentLetterIndex] = State.CORRECT;
-                event.target.value += nextLetter;
-                currentLetterIndex++;
-                nextLetter = words[currentLetterIndex];
+                // console.log("SKIP", current.character.charCodeAt(0))
+                current.state = State.CORRECT;
+                game_state.position++;
+                current = game_state.get_current();
+                next = game_state.get_next();
             }
-            currentLetterIndex--;
+        } else if (alphabet.has(e.key)) {
+            console.log("processing letter");
+            current = game_state.get_current();
+            next = game_state.get_next();
+            console.log(current, next);
+            if (current.character === e.key) {
+                current.state = State.CORRECT;
+                if (e.key === " " || e.key === ";") {
+                    game_state.word_count++;
+                }
+                game_state.position++;
+            } else if (e.key === " ") {
+                if (
+                    game_state.position > 0 &&
+                    game_state.get_at(game_state.position - 1).character !== " "
+                ) {
+                    let position = game_state.position;
+                    while (
+                        position < game_state.sequence.length &&
+                        game_state.get_at(position).character !== " "
+                    ) {
+                        game_state.error_pos.add(position);
+                        game_state.get_at(position).state = State.SKIPPED;
+                        game_state.was_skipped = true;
+                        position++;
+                    }
+                    game_state.position = position;
+                    game_state.position++;
+                }
+            } else {
+                current.state = State.INCORRECT;
+                game_state.error_pos.add(game_state.position);
+                game_state.position++;
+            }
         }
-
-        console.log(keyPressed, " - ", words[currentLetterIndex]);
-
-        currentWordIndex = event.target.value.split(" ").length;
-
-        if (keyPressed === "Backspace") {
-            letterCorrectness[currentLetterIndex - 1] = State.REMAINING;
-            currentLetterIndex--;
-            return;
+        if (game_state.position > 0 && game_state.start_time === null) {
+            game_state.start_time = performance.now();
         }
-
-        letterCorrectness[currentInput.length] =
-            keyPressed === words[currentLetterIndex]
-                ? State.CORRECT
-                : State.INCORRECT;
-        currentLetterIndex++;
+        if (game_state.position >= game_state.sequence.length) {
+            if (!game_state.was_skipped) {
+                // for the last word we don't type space so
+                // we count it at the end unless it's skipped
+                game_state.word_count++;
+            }
+            endGame();
+        }
     }
 
     function endGame() {
         gameActive = false;
         const endTime = new Date().getTime();
-        duration = (endTime - startTime) / 1000;
+        duration = (endTime - game_state.startTime) / 1000;
 
-        const totalWords = words.length;
+        const totalWords = (text.split(" ")).length;
         accuracy = ((correctWords / totalWords) * 100).toFixed(2);
         wpm = ((correctWords / duration) * 60).toFixed(2);
 
@@ -129,6 +332,8 @@ export const test = () => {
     }
 </script>
 
+<svelte:window on:keydown={onkeydown} />
+
 <div class="game-container">
     {#if !gameActive}
         <div class="overlay" on:click={startGame}>
@@ -146,31 +351,15 @@ export const test = () => {
             </div>
         </div>
     {/if}
-    <div>{currentWordIndex} - {currentLetterIndex}</div>
-    <div>{currentLetterIndex}</div>
-    <div>
-        {letterCorrectness.slice(
-            currentLetterIndex - 2,
-            currentLetterIndex + 1,
-        )}
-    </div>
     <div class="word-list">
-        {#each words as letter, index}
+        {#each game_state.sequence as letter, index}
             <letter
-                class="{letterCorrectness[index]} {index === currentLetterIndex
+                class="{letter.state} {index === currentLetterIndex
                     ? 'active'
-                    : ''}">{@html letterToHtml(letter)}</letter
+                    : ''}">{@html letterToHtml(letter.character)}</letter
             >
         {/each}
     </div>
-    <textarea
-        class="input-field hidden"
-        bind:value={currentInput}
-        on:keydown={handleInput}
-        bind:this={inputElement}
-        disabled={!gameActive}
-    />
-    <button on:click={() => inputElement.focus()}>f</button>
 </div>
 
 <style>
