@@ -9,7 +9,6 @@
     let duration: number;
     let accuracy: string, wpm: string;
 
-
     let test = getRandomTestFunction();
 
     async function startGame() {
@@ -175,14 +174,6 @@
 </div>
 
 <style>
-    :root {
-        --color-scheme: light dark;
-        --typed: #d1d0c5 --green: #00b755;
-        --yellow: #e2b714;
-        --red: #ca4754;
-        --black: #222;
-        --gray: #646669;
-    }
     time {
         color: var(--yellow);
     }
@@ -263,17 +254,6 @@
         }
         &.skipped {
             border-bottom: 1px solid var(--red);
-        }
-    }
-
-    @keyframes -global-blink {
-        0%,
-        33% {
-            opacity: 1;
-        }
-
-        67% {
-            opacity: 0;
         }
     }
 </style>
