@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { sequence } from "@sveltejs/kit/hooks";
-    import { tick } from "svelte";
+    import { alphabet } from "$lib/alphabet";
+    import { State, type GameState } from "$lib/game";
     let currentWordIndex = 0;
     let currentLetterIndex = 0;
     let currentInput = "";
@@ -11,40 +11,8 @@
     let inputElement;
     let duration = 0;
     let accuracy = "";
+    let game_state: GameState;
     let wpm = "";
-    let game_state: any = {
-        position: 0,
-        sequence: [],
-    };
-
-    enum State {
-        REMAINING = "remaining",
-        INCORRECT = "incorrect",
-        CORRECT = "correct",
-        SKIPPED = "skipped",
-        SEMI = "semi",
-    }
-
-    type Part = {
-        character: string;
-        state: State;
-    };
-
-    type GameState = {
-        position: number;
-        sequence: Part[];
-        text: string;
-        get_current: () => Part;
-        get_next: () => Part;
-        get_at: (position: number) => Part;
-        letter_count: number,
-        word_count: number,
-        start_time: number | null,
-        done: () => void,
-        error_pos: Set<number>,
-        was_skipped: false,
-        first: true,
-    };
 
     type Settings = {
         ignoreSemicolon: boolean;
@@ -53,111 +21,6 @@
     const game_settings: Settings = {
         ignoreSemicolon: false,
     };
-
-    const lowerCaseLetters = [
-        "a",
-        "b",
-        "c",
-        "d",
-        "e",
-        "f",
-        "g",
-        "h",
-        "i",
-        "j",
-        "k",
-        "l",
-        "m",
-        "n",
-        "o",
-        "p",
-        "q",
-        "r",
-        "s",
-        "t",
-        "u",
-        "v",
-        "w",
-        "x",
-        "y",
-        "z",
-    ];
-    const upperCaseLetters = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
-        "X",
-        "Y",
-        "Z",
-    ];
-    const numbersZeroToNine = [
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-    ];
-    const selectedSpecialCharacters = [
-        "!",
-        "@",
-        "#",
-        "$",
-        "%",
-        "^",
-        "&",
-        "*",
-        "(",
-        ")",
-        "+",
-        "-",
-        ".",
-        "~",
-        "|",
-        "<",
-        ">",
-        "=",
-        "-",
-        "_",
-        "/",
-        ":",
-        ";",
-        "?",
-        "[",
-        "]",
-        "{",
-        "}",
-        "~",
-    ];
-    const allCharacters = lowerCaseLetters
-        .concat(upperCaseLetters)
-        .concat(numbersZeroToNine)
-        .concat(selectedSpecialCharacters);
-    const alphabet = new Set(allCharacters.concat([" "]));
 
     let text = `
 export const test = () => {
@@ -175,7 +38,6 @@ export const test = () => {
                 character,
                 state: State.REMAINING,
             })),
-            letterCorrectness: new Array(text.length).fill(State.REMAINING),
             get_current: () => game_state.sequence[game_state.position],
             get_next: () => game_state.sequence[game_state.position + 1],
             get_at: (position: number) => game_state.sequence[position],
@@ -352,6 +214,7 @@ export const test = () => {
         </div>
     {/if}
     <div class="word-list">
+        {#if gameActive}
         {#each game_state.sequence as letter, index}
             <letter
                 class="{letter.state} {index === currentLetterIndex
@@ -359,6 +222,7 @@ export const test = () => {
                     : ''}">{@html letterToHtml(letter.character)}</letter
             >
         {/each}
+        {/if}
     </div>
 </div>
 
