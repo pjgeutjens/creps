@@ -3,6 +3,7 @@
     import { CharacterState, Game, type GameState } from "$lib/game";
     import { getRandomTestFunction, inputFunctions } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
+    import StartGameOverlay from "../components/StartGameOverlay.svelte";
     let gameActive = false;
     let showStatsOverlay = false;
     let game: Game;
@@ -140,13 +141,9 @@
 <svelte:window on:keydown={onkeydown} />
 
 <div class="game-container">
-    {#if !gameActive}
-        <button class="overlay" on:click={startGame}>
-            Click here to start typing
-        </button>
-    {/if}
+    <StartGameOverlay onClick={startGame} {gameActive} />
 
-    {#if showStatsOverlay}
+    <!-- {#if showStatsOverlay}
         <div class="overlay">
             <div class="stats">
                 <p>Time: {duration} seconds</p>
@@ -155,7 +152,7 @@
                 <button on:click={startGame}>Restart</button>
             </div>
         </div>
-    {/if}
+    {/if} -->
     <div class="word-list">
         <section id="game">
             <time>30</time>
@@ -204,21 +201,6 @@
         font-size: 24px;
         padding: 5px;
     }
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.75); /* Slightly lighter black overlay */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        backdrop-filter: blur(6px);
-    }
     .hidden {
         opacity: 20%;
         pointer-events: none;
@@ -244,7 +226,7 @@
             left: 65%;
         }
         &.correct {
-            color: var(--typed);
+            color: var(--text-color);
         }
         &.incorrect {
             color: var(--red);
