@@ -1,4 +1,4 @@
-export enum State {
+export enum CharacterState {
     REMAINING = "remaining",
     INCORRECT = "incorrect",
     CORRECT = "correct",
@@ -8,7 +8,7 @@ export enum State {
 
 export type Part = {
     character: string;
-    state: State;
+    state: CharacterState;
 };
 
 type GameSettings = {
@@ -50,7 +50,7 @@ export class Game {
         this.position = 0;
         this.sequence = Array.from(text).map((character: string) => ({
             character,
-            state: State.REMAINING,
+            state: CharacterState.REMAINING,
         }));
         this.error_pos = new Set();
         this.letter_count = 0;

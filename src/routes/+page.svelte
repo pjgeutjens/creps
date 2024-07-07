@@ -1,6 +1,7 @@
 <script lang="ts">
     import { alphabet } from "$lib/alphabet";
-    import { State, Game, type GameState } from "$lib/game";
+    import { CharacterState, Game, type GameState } from "$lib/game";
+    import { getRandomTestFunction, inputFunctions } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     let gameActive = false;
     let showStatsOverlay = false;
@@ -8,16 +9,13 @@
     let duration: number;
     let accuracy: string, wpm: string;
 
-    let text = `
-export const test = () => {
-  return x;
-};
-  `.trim();
+
+    let test = getRandomTestFunction();
 
     async function startGame() {
         showStatsOverlay = false;
         gameActive = true;
-        game = new Game(text);
+        game = new Game(test);
     }
 
     function endGame() {
@@ -25,7 +23,7 @@ export const test = () => {
         const endTime = new Date().getTime();
         duration = (endTime - game.start_time!) / 1000;
 
-        const totalWords = text.split(" ").length;
+        const totalWords = test.split(" ").length;
         accuracy = "0";
         wpm = "0";
 
@@ -48,7 +46,7 @@ export const test = () => {
             console.log("processing backspace");
             if (game.position > 0) {
                 game.position--;
-                game.sequence[game.position].state = State.REMAINING;
+                game.sequence[game.position].state = CharacterState.REMAINING;
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
@@ -66,12 +64,12 @@ export const test = () => {
                 switch (game_settings.ignoreSemicolon) {
                     case true:
                         console.log("IGNORING SEMICOLON");
-                        current.state = State.SEMI;
+                        current.state = CharacterState.SEMI;
                         game.position++;
                         break;
                     case false:
                         console.log("ERROR SEMICOLON");
-                        current.state = State.INCORRECT;
+                        current.state = CharacterState.INCORRECT;
                         game.error_pos.add(game.position);
                         game.position++;
                         break;
@@ -86,7 +84,7 @@ export const test = () => {
                 current.character === " "
             ) {
                 // console.log("SKIP", current.character.charCodeAt(0))
-                current.state = State.CORRECT;
+                current.state = CharacterState.CORRECT;
                 game.position++;
                 current = game.get_current();
                 next = game.get_next();
@@ -97,7 +95,7 @@ export const test = () => {
             next = game.get_next();
             console.log(current, next);
             if (current.character === e.key) {
-                current.state = State.CORRECT;
+                current.state = CharacterState.CORRECT;
                 if (e.key === " " || e.key === ";") {
                     game.word_count++;
                 }
@@ -113,7 +111,7 @@ export const test = () => {
                         game.get_at(position).character !== " "
                     ) {
                         game.error_pos.add(position);
-                        game.get_at(position).state = State.SKIPPED;
+                        game.get_at(position).state = CharacterState.SKIPPED;
                         game.was_skipped = true;
                         position++;
                     }
@@ -121,7 +119,7 @@ export const test = () => {
                     game.position++;
                 }
             } else {
-                current.state = State.INCORRECT;
+                current.state = CharacterState.INCORRECT;
                 game.error_pos.add(game.position);
                 game.position++;
             }
@@ -160,6 +158,10 @@ export const test = () => {
         </div>
     {/if}
     <div class="word-list">
+        <section id="game">
+            <time>30</time>
+            <p></p>
+        </section>
         {#if gameActive}
             {#each game.sequence as letter, index}
                 <letter
@@ -175,17 +177,20 @@ export const test = () => {
 <style>
     :root {
         --color-scheme: light dark;
-        --green: #00b755;
-        --yellow: #daaf38;
+        --typed: #d1d0c5 --green: #00b755;
+        --yellow: #e2b714;
         --red: #ca4754;
         --black: #222;
-        --gray: #999;
+        --gray: #646669;
+    }
+    time {
+        color: var(--yellow);
     }
     .game-container {
         background-color: #1e1e1e; /* Dark background */
         color: #ccc; /* Light grey text */
         font-family: "Menlo", monospace; /* Monospace font */
-        font-size: 1.2em;
+        font-size: 1.5expoem;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -239,23 +244,22 @@ export const test = () => {
         &.active::before {
             content: "|";
             color: var(--yellow);
-            font-size: 16px;
+            font-size: 1em;
             position: absolute;
             left: -50%;
-            top: 2px;
             animation: 1s blink infinite ease-in-out;
         }
         &.is-last::before {
             left: 65%;
         }
         &.correct {
-            color: var(--green);
+            color: var(--typed);
         }
         &.incorrect {
             color: var(--red);
         }
         &.remaining {
-            color: white;
+            color: var(--gray);
         }
         &.skipped {
             border-bottom: 1px solid var(--red);
