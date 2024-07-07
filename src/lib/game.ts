@@ -36,6 +36,7 @@ export type GameState = {
 export class Game {
     position: number;
     sequence: Part[];
+    settings: GameSettings;
     letter_count: number;
     word_count: number;
     start_time: number | null;
@@ -46,7 +47,8 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(text:string) {
+    constructor(text:string, settings: GameSettings | null = null) {
+        this.settings = settings ? settings : { ignoreSemicolon: false };
         this.position = 0;
         this.sequence = Array.from(text).map((character: string) => ({
             character,

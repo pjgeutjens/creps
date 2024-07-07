@@ -61,7 +61,7 @@
                 }
             }
             if (current.character === ";") {
-                switch (game_settings.ignoreSemicolon) {
+                switch (game.settings.ignoreSemicolon) {
                     case true:
                         console.log("IGNORING SEMICOLON");
                         current.state = CharacterState.SEMI;
@@ -142,9 +142,9 @@
 
 <div class="game-container">
     {#if !gameActive}
-        <div class="overlay" on:click={startGame}>
+        <button class="overlay" on:click={startGame}>
             Click here to start typing
-        </div>
+        </button>
     {/if}
 
     {#if showStatsOverlay}
