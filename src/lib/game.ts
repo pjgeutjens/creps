@@ -11,6 +11,10 @@ export type Part = {
     state: State;
 };
 
+type GameSettings = {
+    ignoreSemicolon: boolean;
+};
+
 export type GameState = {
     position: number;
     sequence: Part[];

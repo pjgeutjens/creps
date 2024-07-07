@@ -1,32 +1,23 @@
 <script lang="ts">
     import { alphabet } from "$lib/alphabet";
     import { State, Game, type GameState } from "$lib/game";
-    let currentLetterIndex = 0;
-    let correctWords = 0;
+    import { letterToHtml } from "$lib/utils";
     let gameActive = false;
     let showStatsOverlay = false;
     let game: Game;
     let duration: number;
-    let accuracy: string, wpm: string
-
-    type Settings = {
-        ignoreSemicolon: boolean;
-    };
-
-    const game_settings: Settings = {
-        ignoreSemicolon: false,
-    };
+    let accuracy: string, wpm: string;
 
     let text = `
 export const test = () => {
   return x;
 };
-  `.trim()
+  `.trim();
 
     async function startGame() {
         showStatsOverlay = false;
         gameActive = true;
-        game = new Game(text)
+        game = new Game(text);
     }
 
     function endGame() {
@@ -34,26 +25,16 @@ export const test = () => {
         const endTime = new Date().getTime();
         duration = (endTime - game.start_time!) / 1000;
 
-        const totalWords = (text.split(" ")).length;
-        accuracy = ((correctWords / totalWords) * 100).toFixed(2);
-        wpm = ((correctWords / duration) * 60).toFixed(2);
+        const totalWords = text.split(" ").length;
+        accuracy = "0";
+        wpm = "0";
 
         showStatsOverlay = true;
         // alert(`Game over! You typed ${correctWords} words correctly in ${duration} seconds.`);
     }
 
-    function letterToHtml(letter: string) {
-        if (letter.charCodeAt(0) === 10) {
-            return `<br/>`;
-        }
-        if (letter.charCodeAt(0) === 32) {
-            return `&ensp;`;
-        }
-        return `${letter}`;
-    }
-
     function onkeydown(e: KeyboardEvent) {
-        let current, next
+        let current, next;
         console.log("onKyeDown", e.key);
         // game.sequence.forEach((element) =>
         //   // console.log(element.character, "->", element.character.charCodeAt(0), element.character.length, "->",  element.state),
@@ -67,8 +48,7 @@ export const test = () => {
             console.log("processing backspace");
             if (game.position > 0) {
                 game.position--;
-                game.sequence[game.position].state =
-                    State.REMAINING;
+                game.sequence[game.position].state = State.REMAINING;
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
@@ -158,7 +138,6 @@ export const test = () => {
             endGame();
         }
     }
-
 </script>
 
 <svelte:window on:keydown={onkeydown} />
@@ -182,13 +161,13 @@ export const test = () => {
     {/if}
     <div class="word-list">
         {#if gameActive}
-        {#each game.sequence as letter, index}
-            <letter
-                class="{letter.state} {index === currentLetterIndex
-                    ? 'active'
-                    : ''}">{@html letterToHtml(letter.character)}</letter
-            >
-        {/each}
+            {#each game.sequence as letter, index}
+                <letter
+                    class="{letter.state} {index === game.position
+                        ? 'active'
+                        : ''}">{@html letterToHtml(letter.character)}</letter
+                >
+            {/each}
         {/if}
     </div>
 </div>
@@ -260,10 +239,14 @@ export const test = () => {
         &.active::before {
             content: "|";
             color: var(--yellow);
-            font-size: 1em;
+            font-size: 16px;
             position: absolute;
-            left: -60%;
+            left: -50%;
+            top: 2px;
             animation: 1s blink infinite ease-in-out;
+        }
+        &.is-last::before {
+            left: 65%;
         }
         &.correct {
             color: var(--green);
@@ -279,9 +262,14 @@ export const test = () => {
         }
     }
 
-    textarea {
-        width: 100%;
-        height: 300px;
-        z-index: 100;
+    @keyframes -global-blink {
+        0%,
+        33% {
+            opacity: 1;
+        }
+
+        67% {
+            opacity: 0;
+        }
     }
 </style>
