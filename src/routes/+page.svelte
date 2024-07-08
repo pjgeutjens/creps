@@ -5,10 +5,12 @@
     import { letterToHtml } from "$lib/utils";
     import StartGameOverlay from "../components/StartGameOverlay.svelte";
     let gameActive = false;
+    let timerRunning = false;
     let showStatsOverlay = false;
     let game: Game;
     let duration: number;
     let accuracy: string, wpm: string;
+    let timer: number;
 
     let test = getRandomTestFunction();
 
@@ -33,15 +35,17 @@
 
     function onkeydown(e: KeyboardEvent) {
         let current, next;
-        console.log("onKyeDown", e.key);
-        // game.sequence.forEach((element) =>
-        //   // console.log(element.character, "->", element.character.charCodeAt(0), element.character.length, "->",  element.state),
-        // );
+        if (!timerRunning) {
+            timerRunning = true;
+            timer = setInterval(() => {
+                game.duration--;
+                if (game.duration <= 0) {
+                    clearInterval(timer);
+                    endGame();
+                }
+            }, 1000);
+        }
         e.preventDefault();
-        // const key = e.key.toLowerCase();
-        console.log(e.key);
-        console.log("position:", game.position);
-        const last_position = game.position;
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if (game.position > 0) {
@@ -142,20 +146,9 @@
 
 <div class="game-container">
     <StartGameOverlay onClick={startGame} {gameActive} />
-
-    <!-- {#if showStatsOverlay}
-        <div class="overlay">
-            <div class="stats">
-                <p>Time: {duration} seconds</p>
-                <p>Accuracy: {accuracy}%</p>
-                <p>WPM: {wpm}</p>
-                <button on:click={startGame}>Restart</button>
-            </div>
-        </div>
-    {/if} -->
     <div class="word-list">
         <section id="game">
-            <time>30</time>
+            <time>{game ? game.duration : ''}</time>
             <p></p>
         </section>
         {#if gameActive}

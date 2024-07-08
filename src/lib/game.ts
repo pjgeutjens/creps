@@ -47,7 +47,7 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(text:string, settings: GameSettings | null = null) {
+    constructor(text:string, duration: number = 30, settings: GameSettings | null = null) {
         this.settings = settings ? settings : { ignoreSemicolon: false };
         this.position = 0;
         this.sequence = Array.from(text).map((character: string) => ({
@@ -61,7 +61,7 @@ export class Game {
         this.was_skipped = false;
 
         this.first = true;
-        this.duration = 0;
+        this.duration = duration;
         this.accuracy = 0;
         this.wpm = 0;
     }
