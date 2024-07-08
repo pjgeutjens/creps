@@ -1,7 +1,7 @@
 <script lang="ts">
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game, type GameState } from "$lib/game";
-    import { updateStats } from "$lib/stores";
+    import { gameSettings, updateStats } from "$lib/stores";
     import { getRandomTestFunction, inputFunctions } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import StartGameOverlay from "../components/StartGameOverlay.svelte";
@@ -46,11 +46,15 @@
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
-                game.duration--;
+                if ($gameSettings.duration < 150) {
+                    $gameSettings.duration--;
+                }
                 game.timeElapsed++;
                 if (game.duration <= 0) {
                     clearInterval(timer);
-                    endGame();
+                    if (game.timeElapsed < 900) {
+                        endGame();
+                    }
                 }
             }, 1000);
         }
@@ -164,7 +168,7 @@
     <StartGameOverlay onClick={startGame} {gameActive} />
     <div class="word-list">
         <section id="game">
-            <time>{game ? game.duration : ""}</time>
+            <time>{($gameSettings && $gameSettings.duration < 999) ? $gameSettings.duration : "∞"}</time>
             <p></p>
         </section>
         {#if gameActive}

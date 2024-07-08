@@ -1,4 +1,5 @@
 <script>
+    import { gameSettings } from "$lib/stores";
     import "../app.css";
     import TestConfig from "../components/TestConfig.svelte";
     import TestStats from "../components/TestStats.svelte";

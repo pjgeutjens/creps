@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
   type GameSettings = { 
     ignoreSemicolon: boolean 
     language: string
+    duration: number
   };
 
   // Custom store that syncs with local storage
@@ -20,7 +21,7 @@ import { writable } from 'svelte/store';
     };
   }
 
-  export const gameSettings = createLocalStorageStore('codereps-settings', {ignoreSemicolon: false, language: 'javascript'});
+  export const gameSettings = createLocalStorageStore('codereps-settings', {ignoreSemicolon: false, language: 'javascript', duration: 30}); 
 
   type GameStats = {
     wordCount: number;
