@@ -1,7 +1,40 @@
-<script>
-        let testDuration = "30"; // Default test duration
-        let language = "javascript"; // Default language
+<script lang="ts">
+    import { onDestroy } from "svelte";
+    import { stats } from "$lib/stores"; // Adjust the import path as necessary
+    let testDuration = "30"; // Default test duration
+    let language = "javascript"; // Default language
+
+    let localStats = {
+        wordCount: 0,
+        charCount: 0,
+        wordsPerMinute: 0,
+        accuracy: 0,
+    };
+
+    const unsubscribe = stats.subscribe((value) => {
+            localStats = value;
+        });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
 </script>
+
+<div class="test-stats">
+    <div class="stats-buttons">
+        <button class="selected">wpm</button>
+        <button>{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed(2)}</button>
+        <button class="selected">acc</button>
+        <button>{localStats.accuracy.toFixed(2)}%</button>
+    </div>
+    <div class="divider"></div>
+    <div class="count-buttons">
+        <button class="selected">wc</button>
+        <button>{localStats.wordCount}</button>
+        <button class="selected">cc</button>
+        <button>{localStats.charCount}</button>
+    </div>
+</div>
 
 <style>
     .test-stats {
@@ -69,29 +102,3 @@
         margin: 0 20px;
     }
 </style>
-
-
-<div class="test-stats">
-    <div class="stats-buttons">
-        <button class="selected">wpm</button
-        >
-        <button>67.3</button
-        >
-        <button class="selected">acc</button>
-        <button>95.7%</button
-        >
-    </div>
-    <div class="divider"></div>
-    <div class="count-buttons">
-        <button class="selected">wc</button>
-        <button
-            on:click={() => (testDuration = "60")}
-            class:selected={testDuration === "60"}>34</button
-        >
-        <button class="selected">cc</button>
-        <button
-            on:click={() => (testDuration = "60")}
-            class:selected={testDuration === "60"}>148</button
-        >
-    </div>
-</div>

@@ -44,6 +44,7 @@ export class Game {
     was_skipped: boolean;
     first: boolean;
     duration: number;
+    timeElapsed: number;
     accuracy: number;
     wpm: number;
 
@@ -62,6 +63,7 @@ export class Game {
 
         this.first = true;
         this.duration = duration;
+        this.timeElapsed = 0;
         this.accuracy = 0;
         this.wpm = 0;
     }

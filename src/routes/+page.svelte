@@ -1,10 +1,12 @@
 <script lang="ts">
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game, type GameState } from "$lib/game";
+    import { updateStats } from "$lib/stores";
     import { getRandomTestFunction, inputFunctions } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import StartGameOverlay from "../components/StartGameOverlay.svelte";
     let gameActive = false;
+    let gameEnded = false;
     let timerRunning = false;
     let showStatsOverlay = false;
     let game: Game;
@@ -22,6 +24,7 @@
 
     function endGame() {
         gameActive = false;
+        gameEnded = true
         const endTime = new Date().getTime();
         duration = (endTime - game.start_time!) / 1000;
 
@@ -34,11 +37,17 @@
     }
 
     function onkeydown(e: KeyboardEvent) {
+        if (!gameActive && !gameEnded) {
+            gameActive = true;
+            startGame();
+            return
+        }
         let current, next;
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
                 game.duration--;
+                game.timeElapsed++;
                 if (game.duration <= 0) {
                     clearInterval(timer);
                     endGame();
@@ -94,7 +103,7 @@
                 next = game.get_next();
             }
         } else if (alphabet.has(e.key)) {
-            console.log("processing letter");
+            game.letter_count++;
             current = game.get_current();
             next = game.get_next();
             console.log(current, next);
@@ -139,7 +148,14 @@
             }
             endGame();
         }
-    }
+        let newStats = {
+            wordCount: game.word_count,
+            charCount: game.letter_count,
+            wordsPerMinute: (game.letter_count / game.timeElapsed * 60 ) / 5,
+            accuracy: game.letter_count > 0 ? (game.letter_count - game.error_pos.size) / game.letter_count * 100 : 0,
+        };
+        updateStats(newStats);
+  };
 </script>
 
 <svelte:window on:keydown={onkeydown} />
@@ -148,7 +164,7 @@
     <StartGameOverlay onClick={startGame} {gameActive} />
     <div class="word-list">
         <section id="game">
-            <time>{game ? game.duration : ''}</time>
+            <time>{game ? game.duration : ""}</time>
             <p></p>
         </section>
         {#if gameActive}

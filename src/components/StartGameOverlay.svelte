@@ -35,6 +35,6 @@
 </g>
 </svg>
 
-    Click here to focus and start typing
+    Click here or press any key to focus and start typing
 </button>
 {/if}
