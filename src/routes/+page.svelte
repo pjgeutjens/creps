@@ -16,6 +16,8 @@
 
     let test = getRandomTestFunction();
 
+    
+    // TODO: Game component?
     async function startGame() {
         showStatsOverlay = false;
         gameActive = true;
@@ -23,7 +25,7 @@
     }
 
     function endGame() {
-        gameActive = false;
+        // gameActive = false;
         gameEnded = true
         const endTime = new Date().getTime();
         duration = (endTime - game.start_time!) / 1000;
@@ -46,11 +48,12 @@
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
+                // TODO: Fix this randomness with the countdown timer for infinity
                 if ($gameSettings.duration < 150) {
                     $gameSettings.duration--;
                 }
                 game.timeElapsed++;
-                if (game.duration <= 0) {
+                if ($gameSettings.duration <= 0) {
                     clearInterval(timer);
                     if (game.timeElapsed < 900) {
                         endGame();
@@ -169,7 +172,10 @@
     <div class="word-list">
         <section id="game">
             <time>{($gameSettings && $gameSettings.duration < 999) ? $gameSettings.duration : "∞"}</time>
-            <p></p>
+            <button id="language-select">
+                <i class="fa-solid fa-code"></i>
+                {$gameSettings.language}
+            </button>
         </section>
         {#if gameActive}
             {#each game.sequence as letter, index}
@@ -202,6 +208,12 @@
         padding: 20px;
         box-sizing: border-box;
     }
+    #game {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
     .word-list {
         /* display: flex */
         gap: 10px;
@@ -226,6 +238,7 @@
     letter {
         color: var(--gray);
         position: relative;
+        font-size: 22px;
 
         &.active::before {
             content: "|";
@@ -249,6 +262,16 @@
         }
         &.skipped {
             border-bottom: 1px solid var(--red);
+        }
+    }
+
+    #language-select {
+        color: var(--gray);
+        padding-left: 50px;
+        font-size: small;
+
+        &:hover {
+            color: var(--text-color);
         }
     }
 </style>

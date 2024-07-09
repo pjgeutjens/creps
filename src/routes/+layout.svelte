@@ -1,5 +1,5 @@
 <script>
-    import { gameSettings } from "$lib/stores";
+    import '@fortawesome/fontawesome-free/css/all.min.css'
     import "../app.css";
     import TestConfig from "../components/TestConfig.svelte";
     import TestStats from "../components/TestStats.svelte";

@@ -96,6 +96,9 @@ export const selectedSpecialCharacters = [
     "{",
     "}",
     "~",
+    "'",
+    "\"",
+
 ];
 export const allCharacters = lowerCaseLetters
     .concat(upperCaseLetters)

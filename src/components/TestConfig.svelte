@@ -49,16 +49,19 @@
         padding-right: 5px;
         border: none;
         cursor: pointer;
+        &:hover {
+            color: var(--text-color);
+        }
+
+        &.selected {
+            color: var(--yellow); /* Yellow text */
+        }
     }
 
     .infinity {
         position:relative;
         bottom: 2px;
         font-size: 18px;
-    }
-
-    .selected {
-        color: var(--yellow); /* Yellow text */
     }
 
     .divider {

@@ -23,9 +23,9 @@
 <div class="test-stats">
     <div class="stats-buttons">
         <button class="selected">wpm</button>
-        <button>{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed(2)}</button>
+        <button title="{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed(2)} wpm">{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed()}</button>
         <button class="selected">acc</button>
-        <button>{localStats.accuracy.toFixed(2)}%</button>
+        <button title="{localStats.accuracy.toFixed(2)}%">{localStats.accuracy.toFixed()}%</button>
     </div>
     <div class="divider"></div>
     <div class="count-buttons">
@@ -82,7 +82,6 @@
         border: none;
         cursor: pointer;
     }
-
     .selected {
         color: var(--yellow); /* Yellow text */
     }
