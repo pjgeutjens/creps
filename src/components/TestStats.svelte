@@ -1,18 +1,18 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-    import { stats } from "$lib/stores"; // Adjust the import path as necessary
+    import { gameStats } from "$lib/stores"; // Adjust the import path as necessary
     let testDuration = "30"; // Default test duration
     let language = "javascript"; // Default language
 
-    let localStats = {
+    let localgameStats = {
         wordCount: 0,
         charCount: 0,
         wordsPerMinute: 0,
         accuracy: 0,
     };
 
-    const unsubscribe = stats.subscribe((value) => {
-            localStats = value;
+    const unsubscribe = gameStats.subscribe((value) => {
+            localgameStats = value;
         });
 
     onDestroy(() => {
@@ -20,24 +20,24 @@
     });
 </script>
 
-<div class="test-stats">
-    <div class="stats-buttons">
+<div class="test-gameStats">
+    <div class="gameStats-buttons">
         <button class="selected">wpm</button>
-        <button title="{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed(2)} wpm">{(localStats.wordsPerMinute ? localStats.wordsPerMinute : 0).toFixed()}</button>
+        <button title="{(localgameStats.wordsPerMinute ? localgameStats.wordsPerMinute : 0).toFixed(2)} wpm">{(localgameStats.wordsPerMinute ? localgameStats.wordsPerMinute : 0).toFixed()}</button>
         <button class="selected">acc</button>
-        <button title="{localStats.accuracy.toFixed(2)}%">{localStats.accuracy.toFixed()}%</button>
+        <button title="{localgameStats.accuracy.toFixed(2)}%">{localgameStats.accuracy.toFixed()}%</button>
     </div>
     <div class="divider"></div>
     <div class="count-buttons">
         <button class="selected">wc</button>
-        <button>{localStats.wordCount}</button>
+        <button>{localgameStats.wordCount}</button>
         <button class="selected">cc</button>
-        <button>{localStats.charCount}</button>
+        <button>{localgameStats.charCount}</button>
     </div>
 </div>
 
 <style>
-    .test-stats {
+    .test-gameStats {
         position: absolute;
         bottom: 15%;
         left: 50%;
@@ -50,7 +50,7 @@
         background-color: #333;
         border-radius: 8px;
     }
-    .stats-buttons {
+    .gameStats-buttons {
         display: flex;
         font-size: 16px;
         margin-top: 5px;
