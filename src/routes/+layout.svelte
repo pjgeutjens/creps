@@ -9,7 +9,7 @@
     </header>
     <main>
         <slot></slot>
-        <!-- Main content will be injected here -->>
+        <!-- Main content will be injected here -->
     </main>
     <footer>
     </footer>
