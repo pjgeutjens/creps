@@ -163,32 +163,6 @@
     }
 </script>
 
-<svelte:window on:keydown={onkeydown} />
-<div class="game-container">
-    <StartGameOverlay onClick={startGame} gameActive={$gameStats.active} />
-    <div class="word-list">
-        <section id="game">
-            <time
-                >{$gameSettings && $gameSettings.duration < 999
-                    ? $gameSettings.duration
-                    : "∞"}</time
-            >
-            <button id="language-select">
-                <i class="fa-solid fa-code"></i>
-                {$gameSettings.language}
-            </button>
-        </section>
-        {#if $gameStats.active}
-            {#each game.sequence as letter, index}
-                <letter
-                    class="{letter.state} {index === game.position
-                        ? 'active'
-                        : ''}">{@html letterToHtml(letter.character)}</letter
-                >
-            {/each}
-        {/if}
-    </div>
-</div>
 
 <style>
     time {
@@ -267,3 +241,30 @@
         }
     }
 </style>
+
+<svelte:window on:keydown={onkeydown} />
+<div class="game-container">
+    <StartGameOverlay onClick={startGame} gameActive={$gameStats.active} />
+    <div class="word-list">
+        <section id="game">
+            <time
+                >{$gameSettings && $gameSettings.duration < 999
+                    ? $gameSettings.duration
+                    : "∞"}</time
+            >
+            <button id="language-select">
+                <i class="fa-solid fa-code"></i>
+                {$gameSettings.language}
+            </button>
+        </section>
+        {#if $gameStats.active}
+            {#each game.sequence as letter, index}
+                <letter
+                    class="{letter.state} {index === game.position
+                        ? 'active'
+                        : ''}">{@html letterToHtml(letter.character)}</letter
+                >
+            {/each}
+        {/if}
+    </div>
+</div>
