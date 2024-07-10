@@ -3,6 +3,7 @@
     import "../app.css";
     import TestConfig from "../components/TestConfig.svelte";
     import TestStats from "../components/TestStats.svelte";
+    import Test from '../components/Test.svelte';
 </script>
 
 <div class="app-container">
@@ -12,8 +13,9 @@
     <TestConfig />
     <TestStats />
     <main>
+        <Test />
         <slot></slot>
-        <!-- Main content will be injected here -->
+        <!-- Main content will be injected here -->>
     </main>
     <footer>
     </footer>

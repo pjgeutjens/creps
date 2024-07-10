@@ -28,18 +28,22 @@ import { writable } from 'svelte/store';
     charCount: number;
     wordsPerMinute: number;
     accuracy: number;
+    active: boolean;
+    ended: boolean;
   };
 
-  export const stats = writable<GameStats>({
+  export const gameStats = writable<GameStats>({
     wordCount: 0,
     charCount: 0,
     wordsPerMinute: 0,
     accuracy: 0,
+    active: false,
+    ended: false
   });
 
   // Function to update stats
   export function updateStats(newStats: GameStats) {
-    stats.update(currentStats => {
+    gameStats.update(currentStats => {
       return { ...currentStats, ...newStats };
     });
   }
