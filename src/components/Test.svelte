@@ -5,18 +5,20 @@
     import { getRandomTestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
 
+    export let tests;
+
     import StartGameOverlay from "./StartGameOverlay.svelte";
 
     let game: Game;
     let timerRunning = false;
     let timer: number;
 
-    let test = getRandomTestFunction();
+    let test = getRandomTestFunction($gameSettings.language);
 
     async function startGame() {
         $gameStats.active = true;
         $gameStats.ended = false;
-        game = new Game(test);
+        game = new Game(test.content.trim());
     }
 
     function endGame() {
@@ -25,7 +27,7 @@
         const endTime = new Date().getTime();
         // duration = (endTime - game.start_time!) / 1000;
 
-        const totalWords = test.split(" ").length;
+        const totalWords = test.content.split(" ").length;
         // alert(`Game over! You typed ${correctWords} words correctly in ${duration} seconds.`);
     }
 
