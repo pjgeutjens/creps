@@ -1,8 +1,7 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
     import { gameStats } from "$lib/stores"; // Adjust the import path as necessary
-    let testDuration = "30"; // Default test duration
-    let language = "javascript"; // Default language
+
 
     let localgameStats = {
         wordCount: 0,

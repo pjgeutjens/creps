@@ -93,5 +93,100 @@ export const tests = [
         content: "function arrayChunk(arr, size) {\n  const chunkedArr = [];\n  for (let i = 0; i < arr.length; i += size) {\n    chunkedArr.push(arr.slice(i, i + size));\n  }\n  return chunkedArr;\n}",
         description: "Split an array into chunks.",
         language: "javascript",
+    },
+    {
+        content: "function capitalize(str: string): string {\n  return str.charAt(0).toUpperCase() + str.slice(1);\n}",
+        description: "Capitalize the first letter of a string.",
+        language: "typescript",
+    },
+    {
+        content: "function reverseString(str: string): string {\n  return str.split('').reverse().join('');\n}",
+        description: "Reverse a string.",
+        language: "typescript",
+    },
+    {
+        content: "function findMax(arr: number[]): number {\n  return Math.max(...arr);\n}",
+        description: "Find the maximum number in an array.",
+        language: "typescript",
+    },
+    {
+        content: "function findMin(arr: number[]): number {\n  return Math.min(...arr);\n}",
+        description: "Find the minimum number in an array.",
+        language: "typescript",
+    },
+    {
+        content: "function sumArray(arr: number[]): number {\n  return arr.reduce((acc, val) => acc + val, 0);\n}",
+        description: "Sum all numbers in an array.",
+        language: "typescript",
+    },
+    {
+        content: "function isPalindrome(str: string): boolean {\n  const reversed = str.split('').reverse().join('');\n  return str === reversed;\n}",
+        description: "Check if a string is a palindrome.",
+        language: "typescript",
+    },
+    {
+        content: "function arrayAverage(arr: number[]): number {\n  const sum = arr.reduce((acc, val) => acc + val, 0);\n  return sum / arr.length;\n}",
+        description: "Calculate the average of an array.",
+        language: "typescript",
+    },
+    {
+        content: "function removeDuplicates(arr: any[]): any[] {\n  return [...new Set(arr)];\n}",
+        description: "Remove duplicates from an array.",
+        language: "typescript",
+    },
+    {
+        content: "function fibonacci(n: number): number {\n  let [a, b] = [0, 1];\n  while (n-- > 0) [a, b] = [b, a + b];\n  return a;\n}",
+        description: "Generate the nth Fibonacci number.",
+        language: "typescript",
+    },
+    {
+        content: "function factorial(n: number): number {\n  if (n === 0) return 1;\n  return n * factorial(n - 1);\n}",
+        description: "Calculate the factorial of a number.",
+        language: "typescript",
+    },
+    {
+        content: "function countWords(str: string): number {\n  return str.split(' ').filter(Boolean).length;\n}",
+        description: "Count the number of words in a string.",
+        language: "typescript",
+    },
+    {
+        content: "function mergeArrays(arr1: any[], arr2: any[]): any[] {\n  return [...arr1, ...arr2];\n}",
+        description: "Merge two arrays.",
+        language: "typescript",
+    },
+    {
+        content: "function toCamelCase(str: string): string {\n  return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());\n}",
+        description: "Convert a string to camel case.",
+        language: "typescript",
+    },
+    {
+        content: "function isPrime(num: number): boolean {\n  for (let i = 2; i < num; i++) if (num % i === 0) return false;\n  return num > 1;\n}",
+        description: "Check if a number is prime.",
+        language: "typescript",
+    },
+    {
+        content: "function getRandomInt(min: number, max: number): number {\n  return Math.floor(Math.random() * (max - min + 1)) + min;\n}",
+        description: "Generate a random integer within a range.",
+        language: "typescript",
+    },
+    {
+        content: "function deepClone<T>(obj: T): T {\n  return JSON.parse(JSON.stringify(obj));\n}",
+        description: "Deep clone an object.",
+        language: "typescript",
+    },
+    {
+        content: "function debounce(func: Function, wait: number): Function {\n  let timeout: ReturnType<typeof setTimeout> | null;\n  return function(...args: any[]) {\n    if (timeout !== null) {\n      clearTimeout(timeout);\n    }\n    timeout = setTimeout(() => func.apply(this, args), wait);\n  };\n}",
+        description: "Debounce a function.",
+        language: "typescript",
+    },
+    {
+        content: "function throttle(func: Function, limit: number): Function {\n  let inThrottle: boolean;\n  return function(...args: any[]) {\n    if (!inThrottle) {\n      func.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => (inThrottle = false), limit);\n    }\n  };\n}",
+        description: "Throttle a function.",
+        language: "typescript",
+    },
+    {
+        content: "function arrayChunk<T>(arr: T[], size: number): T[][] {\n  const chunkedArr: T[][] = [];\n  for (let i = 0; i < arr.length; i += size) {\n    chunkedArr.push(arr.slice(i, i + size));\n  }\n  return chunkedArr;\n}",
+        description: "Split an array into chunks.",
+        language: "typescript",
     }
 ];
