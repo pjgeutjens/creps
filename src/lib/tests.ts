@@ -1,23 +1,23 @@
 import { tests } from "$lib/data";
 
-export const inputFunctions = [
+// export const inputFunctions = [
 
-`export function letterToHtml(letter: string) {
-    if (letter.charCodeAt(0) === 10) {
-        return '<br/>';
-    }
-    if (letter.charCodeAt(0) === 32) {
-        return '&ensp;';
-    }
-    return letter;
-};`,
-`export const test = () => {
-    return x;
-};
-`
-]
+// `export function letterToHtml(letter: string) {
+//     if (letter.charCodeAt(0) === 10) {
+//         return '<br/>';
+//     }
+//     if (letter.charCodeAt(0) === 32) {
+//         return '&ensp;';
+//     }
+//     return letter;
+// };`,
+// `export const test = () => {
+//     return x;
+// };
+// `
+// ]
 
-type TestFunction = {
+export type TestFunction = {
     content: string;
     description: string;
     language: string;

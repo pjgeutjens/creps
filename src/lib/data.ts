@@ -293,4 +293,154 @@ export const tests = [
         description: "Generate the nth Fibonacci number.",
         language: "golang",
     },
+    {
+        content: "def add(a, b):\n    return a + b",
+        description: "Add two numbers.",
+        language: "python",
+    },
+    {
+        content: "def subtract(a, b):\n    return a - b",
+        description: "Subtract two numbers.",
+        language: "python",
+    },
+    {
+        content: "def multiply(a, b):\n    return a * b",
+        description: "Multiply two numbers.",
+        language: "python",
+    },
+    {
+        content: "def divide(a, b):\n    return a / b",
+        description: "Divide two numbers.",
+        language: "python",
+    },
+    {
+        content: "def square(n):\n    return n * n",
+        description: "Square a number.",
+        language: "python",
+    },
+    {
+        content: "def cube(n):\n    return n ** 3",
+        description: "Cube a number.",
+        language: "python",
+    },
+    {
+        content: "def power(base, exponent):\n    return base ** exponent",
+        description: "Raise a number to a power.",
+        language: "python",
+    },
+    {
+        content: "def sqrt(n):\n    return n ** 0.5",
+        description: "Square root of a number.",
+        language: "python",
+    },
+    {
+        content: "def absolute(n):\n    return abs(n)",
+        description: "Absolute value of a number.",
+        language: "python",
+    },
+    {
+        content: "def factorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * factorial(n-1)",
+        description: "Factorial of a number.",
+        language: "python",
+    },
+    {
+        content: "def fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a",
+        description: "Nth Fibonacci number.",
+        language: "python",
+    },
+    {
+        content: "def is_even(n):\n    return n % 2 == 0",
+        description: "Check if a number is even.",
+        language: "python",
+    },
+    {
+        content: "def is_odd(n):\n    return n % 2 != 0",
+        description: "Check if a number is odd.",
+        language: "python",
+    },
+    {
+        content: "def max_of_three(a, b, c):\n    return max(a, b, c)",
+        description: "Maximum of three numbers.",
+        language: "python",
+    },
+    {
+        content: "def min_of_three(a, b, c):\n    return min(a, b, c)",
+        description: "Minimum of three numbers.",
+        language: "python",
+    },
+    {
+        content: "def is_prime(n):\n    if n <= 1:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True",
+        description: "Check if a number is prime.",
+        language: "python",
+    },
+    {
+        content: "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a",
+        description: "Greatest common divisor of two numbers.",
+        language: "python",
+    },
+    {
+        content: "def lcm(a, b):\n    return abs(a*b) // gcd(a, b)",
+        description: "Least common multiple of two numbers.",
+        language: "python",
+    },
+    {
+        content: "def reverse_string(s):\n    return s[::-1]",
+        description: "Reverse a string.",
+        language: "python",
+    },
+    {
+        content: "def is_palindrome(s):\n    return s == s[::-1]",
+        description: "Check if a string is a palindrome.",
+        language: "python",
+    },
+    {
+        content: "def count_vowels(s):\n    return sum(1 for char in s if char in 'aeiouAEIOU')",
+        description: "Count the number of vowels in a string.",
+        language: "python",
+    },
+    {
+        content: "def merge_two_dicts(a, b):\n    c = a.copy()\n    c.update(b)\n    return c",
+        description: "Merge two dictionaries.",
+        language: "python",
+    },
+    {
+        content: "def find_unique_elements(lst):\n    return list(set(lst))",
+        description: "Find unique elements in a list.",
+        language: "python",
+    },
+    {
+        content: "def get_duplicates(lst):\n    return list(set([x for x in lst if lst.count(x) > 1]))",
+        description: "Get duplicates from a list.",
+        language: "python",
+    },
+    {
+        content: "def rotate_list(lst, k):\n    return lst[-k:] + lst[:-k]",
+        description: "Rotate a list by k elements.",
+        language: "python",
+    },
+    {
+        content: "def list_to_string(lst):\n    return ' '.join(lst)",
+        description: "Convert a list to a string.",
+        language: "python",
+    },
+    {
+        content: "def string_to_list(s):\n    return s.split()",
+        description: "Convert a string to a list.",
+        language: "python",
+    },
+    {
+        content: "def list_intersection(lst1, lst2):\n    return list(set(lst1) & set(lst2))",
+        description: "Find the intersection of two lists.",
+        language: "python",
+    },
+    {
+        content: "def list_difference(lst1, lst2):\n    return list(set(lst1) - set(lst2))",
+        description: "Find the difference between two lists.",
+        language: "python",
+    },
+    {
+        content: "def list_union(lst1, lst2):\n    return list(set(lst1) | set(lst2))",
+        description: "Find the union of two lists.",
+        language: "python",
+    }
 ];

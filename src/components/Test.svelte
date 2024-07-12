@@ -4,6 +4,7 @@
     import { gameSettings, gameStats, updateStats } from "$lib/stores";
     import { getRandomTestFunction, type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
+    import { onDestroy } from "svelte";
     import LanguageSelect from "./LanguageSelect.svelte";
 
     import StartGameOverlay from "./StartGameOverlay.svelte";
@@ -14,10 +15,20 @@
 
     let test: TestFunction;
 
+    let unsubscribe = gameSettings.subscribe((currentValue) => {
+        startGame()
+    })
+
+    onDestroy(() => {
+        unsubscribe();
+    });
+
     function startGame() {
+        console.log("Starting game");
         test = getRandomTestFunction($gameSettings.language);
         $gameStats.active = true;
         $gameStats.ended = false;
+        timerRunning = false;
         game = new Game(test.content.trim());
     }
 
@@ -27,8 +38,6 @@
         const endTime = new Date().getTime();
         // duration = (endTime - game.start_time!) / 1000;
 
-        const totalWords = test.content.split(" ").length;
-        // alert(`Game over! You typed ${correctWords} words correctly in ${duration} seconds.`);
     }
 
     function onkeydown(e: KeyboardEvent) {
@@ -43,10 +52,9 @@
             timer = setInterval(() => {
                 // TODO: Fix this randomness with the countdown timer for infinity
                 if ($gameSettings.duration < 150) {
-                    $gameSettings.duration--;
                 }
                 game.timeElapsed++;
-                if ($gameSettings.duration <= 0) {
+                if (game.timeElapsed >= $gameSettings.duration) {
                     clearInterval(timer);
                     if (game.timeElapsed < 900) {
                         endGame();
@@ -251,7 +259,7 @@
         <section id="game">
             <time
                 >{$gameSettings && $gameSettings.duration < 999
-                    ? $gameSettings.duration
+                    ? ($gameSettings.duration - game.timeElapsed).toFixed(0)
                     : "∞"}</time
             >
             <LanguageSelect />
