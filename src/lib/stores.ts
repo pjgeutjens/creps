@@ -21,7 +21,7 @@ import { writable } from 'svelte/store';
     };
   }
 
-  export const gameSettings = createLocalStorageStore('codereps-settings', {ignoreSemicolon: false, language: 'typescript', duration: 30}); 
+  export const gameSettings = createLocalStorageStore('codereps-settings', {ignoreSemicolon: false, language: 'golang', duration: 30}); 
 
   type GameStats = {
     wordCount: number;

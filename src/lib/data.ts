@@ -188,5 +188,109 @@ export const tests = [
         content: "function arrayChunk<T>(arr: T[], size: number): T[][] {\n  const chunkedArr: T[][] = [];\n  for (let i = 0; i < arr.length; i += size) {\n    chunkedArr.push(arr.slice(i, i + size));\n  }\n  return chunkedArr;\n}",
         description: "Split an array into chunks.",
         language: "typescript",
+    },
+    {
+        content: `func capitalize(str string) string {
+    return strings.ToUpper(str[:1]) + str[1:]
+}`,
+        description: "Capitalize the first letter of a string.",
+        language: "golang",
+    },
+    {
+        content: `func reverseString(str string) string {
+    runes := []rune(str)
+    for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+        runes[i], runes[j] = runes[j], runes[i]
     }
+    return string(runes)
+}`,
+        description: "Reverse a string.",
+        language: "golang",
+    },
+    {
+        content: `func findMax(arr []int) int {
+    max := arr[0]
+    for _, val := range arr {
+        if val > max {
+            max = val
+        }
+    }
+    return max
+}`,
+        description: "Find the maximum number in an array.",
+        language: "golang",
+    },
+    {
+        content: `func findMin(arr []int) int {
+    min := arr[0]
+    for _, val := range arr {
+        if val < min {
+            min = val
+        }
+    }
+    return min
+}`,
+        description: "Find the minimum number in an array.",
+        language: "golang",
+    },
+    {
+        content: `func sumArray(arr []int) int {
+    sum := 0
+    for _, val := range arr {
+        sum += val
+    }
+    return sum
+}`,
+        description: "Sum all numbers in an array.",
+        language: "golang",
+    },
+    {
+        content: `func isPalindrome(str string) bool {
+    for i := 0; i < len(str)/2; i++ {
+        if str[i] != str[len(str)-i-1] {
+            return false
+        }
+    }
+    return true
+}`,
+        description: "Check if a string is a palindrome.",
+        language: "golang",
+    },
+    {
+        content: `func arrayAverage(arr []int) float64 {
+    sum := 0
+    for _, val := range arr {
+        sum += val
+    }
+    return float64(sum) / float64(len(arr))
+}`,
+        description: "Calculate the average of an array.",
+        language: "golang",
+    },
+    {
+        content: `func removeDuplicates(arr []int) []int {
+    encountered := map[int]bool{}
+    result := []int{}
+
+    for v := range arr {
+        if !encountered[arr[v]] {
+            encountered[arr[v]] = true
+            result = append(result, arr[v])
+        }
+    }
+    return result
+}`,
+        description: "Remove duplicates from an array.",
+        language: "golang",
+    },
+    {
+        content: `func fibonacci(n int) int {
+    if n <= 1 {
+        return n
+    }
+    return fibonacci(n-1) + fibonacci(n-2)
+}`,
+        description: "Generate the nth Fibonacci number.",
+        language: "golang",
+    },
 ];
