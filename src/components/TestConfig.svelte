@@ -82,7 +82,7 @@
 
 
 <div class="test-config">
-    <div class="language-buttons">
+    <!-- <div class="language-buttons">
         <button
             on:click={() => ($gameSettings.language = "javascript")}
             class:selected={$gameSettings.language === "javascript"}>javascript</button
@@ -103,7 +103,7 @@
             on:click={() => ($gameSettings.language = "bash")}
             class:selected={$gameSettings.language === "bash"}>bash</button
         >
-    </div>
+    </div> -->
     <div class="divider"></div>
     <div class="duration-buttons">
         <button

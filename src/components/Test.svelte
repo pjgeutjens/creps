@@ -2,10 +2,9 @@
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game } from "$lib/game";
     import { gameSettings, gameStats, updateStats } from "$lib/stores";
-    import { getRandomTestFunction } from "$lib/tests";
+    import { getRandomTestFunction, type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
-
-    export let tests;
+    import LanguageSelect from "./LanguageSelect.svelte";
 
     import StartGameOverlay from "./StartGameOverlay.svelte";
 
@@ -13,9 +12,10 @@
     let timerRunning = false;
     let timer: number;
 
-    let test = getRandomTestFunction($gameSettings.language);
+    let test: TestFunction;
 
-    async function startGame() {
+    function startGame() {
+        test = getRandomTestFunction($gameSettings.language);
         $gameStats.active = true;
         $gameStats.ended = false;
         game = new Game(test.content.trim());
@@ -254,10 +254,7 @@
                     ? $gameSettings.duration
                     : "∞"}</time
             >
-            <button id="language-select">
-                <i class="fa-solid fa-code"></i>
-                {$gameSettings.language}
-            </button>
+            <LanguageSelect />
         </section>
         {#if $gameStats.active}
             {#each game.sequence as letter, index}
