@@ -442,5 +442,58 @@ export const tests = [
         content: "def list_union(lst1, lst2):\n    return list(set(lst1) | set(lst2))",
         description: "Find the union of two lists.",
         language: "python",
+    },
+    {
+        content: `def find_unique_elements(lst):
+        unique = set(lst)
+        return list(unique)`,
+        description: "Find unique elements in a list.",
+        language: "python",
+    },
+    {
+        content: `def get_duplicates(lst):
+        counts = {}
+        for item in lst:
+            counts[item] = counts.get(item, 0) + 1
+        return [item for item, count in counts.items() if count > 1]`,
+        description: "Get duplicates from a list.",
+        language: "python",
+    },
+    {
+        content: `def rotate_list(lst, k):
+        k = k % len(lst)  # Ensure k is within the bounds of lst length
+        return lst[-k:] + lst[:-k]`,
+        description: "Rotate a list by k elements.",
+        language: "python",
+    },
+    {
+        content: `def list_to_string(lst):
+        return ' '.join(map(str, lst))`,
+        description: "Convert a list to a string.",
+        language: "python",
+    },
+    {
+        content: `def string_to_list(s):
+        return s.split(' ')`,
+        description: "Convert a string to a list.",
+        language: "python",
+    },
+    {
+        content: `def list_intersection(lst1, lst2):
+        return list(set(lst1) & set(lst2))`,
+        description: "Find the intersection of two lists.",
+        language: "python",
+    },
+    {
+        content: `def list_difference(lst1, lst2):
+        return list(set(lst1) - set(lst2))`,
+        description: "Find the difference between two lists.",
+        language: "python",
+    },
+    {
+        content: `def list_union(lst1, lst2):
+        return list(set(lst1) | set(lst2))`,
+        description: "Find the union of two lists.",
+        language: "python",
     }
 ];

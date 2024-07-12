@@ -42,7 +42,7 @@
         left: 50%;
         height: 30px;
         transform: translateX(-50%);
-        width: 50%;
+        width: 60%;
         display: flex;
         justify-content: space-between;
         align-items: center;
