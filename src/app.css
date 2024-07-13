@@ -16,6 +16,7 @@
 
 :root {
     --color-scheme: light dark;
+    --dark-background: #1e1e1e;
     --text-color: #d1d0c5;
     --yellow: #e2b714;
     --red: #ca4754;
