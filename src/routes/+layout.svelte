@@ -1,17 +1,47 @@
-<script>
-    import '@fortawesome/fontawesome-free/css/all.min.css'
+<script lang="ts">
+    import "@fortawesome/fontawesome-free/css/all.min.css";
     import "../app.css";
+    import type { LayoutData } from "./$types";
+    import { session } from "$lib/session";
+    import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
+
+    export let data: LayoutData;
+
+    let loading: boolean = true;
+    let loggedIn: boolean = false;
+
+    session.subscribe((cur: any) => {
+        loading = cur?.loading;
+        loggedIn = cur?.loggedIn;
+    });
+
+    onMount(async () => {
+        const user: any = await data.getAuthUser();
+        const loggedIn = !!user && user?.emailVerified;
+        session.update((cur: any) => {
+            loading = false;
+            return { ...cur, user, loggedIn, loading: false };
+        });
+
+        if (loggedIn) {
+            goto("/");
+        }
+    });
 </script>
 
-<div class="app-container">
-    <header>
-        <!-- <Header /> -->
-    </header>
-    <main>
-        <slot></slot>
-        <!-- Main content will be injected here -->
-    </main>
-    <footer>
-    </footer>
-</div>
-
+{#if loading}
+    <div>Loading...</div>
+{:else}
+    <div class="app-container">
+        <header>
+            <!-- <Header /> -->
+        </header>
+        <main>
+            Logged in: {loggedIn}
+            <slot></slot>
+            <!-- Main content will be injected here -->
+        </main>
+        <footer></footer>
+    </div>
+{/if}
