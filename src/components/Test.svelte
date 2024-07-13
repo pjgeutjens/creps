@@ -28,7 +28,15 @@
         test = getRandomTestFunction($gameSettings.language);
         $gameStats.active = true;
         $gameStats.ended = false;
+        $gameStats.accuracy = 0;
+        $gameStats.wordCount = 0;
+        $gameStats.charCount = 0;
+        $gameStats.wordsPerMinute = 0;
+
         timerRunning = false;
+        if (timer) {
+            clearInterval(timer);
+        }
         game = new Game(test.content.trim());
     }
 
@@ -198,15 +206,6 @@
         justify-content: space-between;
         gap: 10px;
         margin-bottom: 20px;
-    }
-    #language-select {
-        color: var(--gray);
-        padding-left: 50px;
-        font-size: small;
-
-        &:hover {
-            color: var(--text-color);
-        }
     }
     .word-list {
         /* display: flex */
