@@ -23,6 +23,9 @@
         border-radius: 8px;
         z-index: 100;
     }
+    #language-select {
+        color: var(--text-color);
+    }
     .select-button {
         background-color: var(--yellow);
         color: #333;

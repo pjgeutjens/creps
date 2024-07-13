@@ -18,17 +18,6 @@
         background-color: #333;
         border-radius: 8px;
     }
-    .language-buttons {
-        display: flex;
-        font-size: 16px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        gap: 0px;
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-        overflow: hidden;
-        border: 1 px solid #333;
-    }
 
     .duration-buttons {
         display: flex;

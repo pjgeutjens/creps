@@ -8,10 +8,11 @@
     import LanguageSelect from "./LanguageSelect.svelte";
 
     import StartGameOverlay from "./StartGameOverlay.svelte";
+    import Timer from "./Timer.svelte";
 
     let game: Game;
     let timerRunning = false;
-    let timer: number;
+    let timer: NodeJS.Timeout;
 
     let test: TestFunction;
 
@@ -187,10 +188,11 @@
         color: var(--yellow);
     }
     .game-container {
-        background-color: #1e1e1e; /* Dark background */
+        background-color: var(--dark-background); /* Dark background */
         color: #ccc; /* Light grey text */
         font-family: "Menlo", monospace; /* Monospace font */
-        font-size: 1.5expoem;
+        letter-spacing: normal;
+        font-size: 1.5functionexpoem;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -256,11 +258,7 @@
     <StartGameOverlay onClick={startGame} gameActive={$gameStats.active} />
     <div class="word-list">
         <section id="game">
-            <time
-                >{$gameSettings && $gameSettings.duration < 999
-                    ? ($gameSettings.duration - game.timeElapsed).toFixed(0)
-                    : "∞"}</time
-            >
+            <Timer game={game} />
             <LanguageSelect />
         </section>
         {#if $gameStats.active}
