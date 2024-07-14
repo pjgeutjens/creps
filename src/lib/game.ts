@@ -1,3 +1,5 @@
+import type { TestFunction } from "./tests";
+
 export enum CharacterState {
     REMAINING = "remaining",
     INCORRECT = "incorrect",
@@ -18,6 +20,7 @@ type GameSettings = {
 export type GameState = {
     position: number;
     sequence: Part[];
+    next: string[];
     get_current: () => Part;
     get_next: () => Part;
     get_at: (position: number) => Part;
@@ -36,6 +39,7 @@ export type GameState = {
 export class Game {
     position: number;
     sequence: Part[];
+    next: string[];
     settings: GameSettings;
     letter_count: number;
     word_count: number;
@@ -48,13 +52,14 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(text:string, duration: number = 30, settings: GameSettings | null = null) {
+    constructor(tests:TestFunction[], duration: number = 30, settings: GameSettings | null = null) {
         this.settings = settings ? settings : { ignoreSemicolon: false };
         this.position = 0;
-        this.sequence = Array.from(text).map((character: string) => ({
+        this.sequence = Array.from(tests[0].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
         }));
+        this.next = tests.slice(1).map((t) => t.content);
         this.error_pos = new Set();
         this.letter_count = 0;
         this.word_count = 0;

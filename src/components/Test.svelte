@@ -2,7 +2,7 @@
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game } from "$lib/game";
     import { gameSettings, gameStats, updateStats } from "$lib/stores";
-    import { getRandomTestFunction, type TestFunction } from "$lib/tests";
+    import { getRandomTestFunctions, type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
     import LanguageSelect from "./LanguageSelect.svelte";
@@ -14,7 +14,7 @@
     let timerRunning = false;
     let timer: NodeJS.Timeout;
 
-    let test: TestFunction;
+    let tests: TestFunction[];
 
     let unsubscribe = gameSettings.subscribe((currentValue) => {
         startGame()
@@ -26,7 +26,7 @@
 
     function startGame() {
         console.log("Starting game");
-        test = getRandomTestFunction($gameSettings.language);
+        tests = getRandomTestFunctions($gameSettings.language);
         $gameStats.active = true;
         $gameStats.ended = false;
         $gameStats.accuracy = 0;
@@ -38,7 +38,7 @@
         if (timer) {
             clearInterval(timer);
         }
-        game = new Game(test.content.trim());
+        game = new Game(tests);
     }
 
     function endGame() {
@@ -184,9 +184,6 @@
 
 
 <style>
-    time {
-        color: var(--yellow);
-    }
     .game-container {
         background-color: var(--dark-background); /* Dark background */
         color: #ccc; /* Light grey text */

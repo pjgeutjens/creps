@@ -30,6 +30,7 @@ import { writable } from 'svelte/store';
     accuracy: number;
     active: boolean;
     ended: boolean;
+    next: string[];
   };
 
   export const gameStats = writable<GameStats>({
@@ -38,7 +39,8 @@ import { writable } from 'svelte/store';
     wordsPerMinute: 0,
     accuracy: 0,
     active: false,
-    ended: false
+    ended: false,
+    next: []
   });
 
   // Function to update stats
