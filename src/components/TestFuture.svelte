@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { gameSettings, gameStats } from "$lib/stores";
+    import { game } from "$lib/stores";
 
 
     const getFunctionSignatureFromText = (text: string) => {
         // return the contents of text up to the first curly bracket
-        if ($gameSettings.language === "python") {
+        if ($game.settings.language === "python") {
             return text.split(":")[0];
         }
         return text.split("{")[0];
@@ -14,8 +14,8 @@
 <div class="future-container">
     <div class="word-list">
         <div class="word">
-            {#each $gameStats.next as next }
-                {#each getFunctionSignatureFromText(next) as letter, index}
+            {#each $game.tests.slice(1) as next }
+                {#each getFunctionSignatureFromText(next.content) as letter, index}
                     <letter>{letter}</letter>
                 {/each}
             {/each}

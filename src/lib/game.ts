@@ -1,4 +1,5 @@
-import type { TestFunction } from "./tests";
+import { get } from "svelte/store";
+import { getRandomTestFunctions, type TestFunction } from "./tests";
 
 export enum CharacterState {
     REMAINING = "remaining",
@@ -13,9 +14,13 @@ export type Part = {
     state: CharacterState;
 };
 
-type GameSettings = {
-    ignoreSemicolon: boolean;
+
+export type GameSettings = {
+    ignoreSemicolon: boolean
+    language: string
+    duration: number
 };
+
 
 export type GameState = {
     position: number;
@@ -38,8 +43,11 @@ export type GameState = {
 
 export class Game {
     position: number;
+    tests: TestFunction[];
+    testIndex: number;
+    state: 'active' | 'ended' | 'paused';
     sequence: Part[];
-    next: string[];
+    history: string[];
     settings: GameSettings;
     letter_count: number;
     word_count: number;
@@ -47,33 +55,54 @@ export class Game {
     error_pos: Set<number>;
     was_skipped: boolean;
     first: boolean;
-    duration: number;
     timeElapsed: number;
     accuracy: number;
     wpm: number;
 
-    constructor(tests:TestFunction[], duration: number = 30, settings: GameSettings | null = null) {
-        this.settings = settings ? settings : { ignoreSemicolon: false };
+    constructor(tests: TestFunction[], settings: GameSettings | null = null) {
+        this.tests = getRandomTestFunctions(settings ? settings.language : 'golang', 4);
+        this.testIndex = 0;
+        this.settings = settings ? settings : { ignoreSemicolon: false, language: 'golang', duration: 30 };
         this.position = 0;
-        this.sequence = Array.from(tests[0].content.trim()).map((character: string) => ({
+        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
         }));
-        this.next = tests.slice(1).map((t) => t.content);
+        this.state = 'paused';
+        this.history = [];
         this.error_pos = new Set();
         this.letter_count = 0;
         this.word_count = 0;
         this.start_time = new Date().getTime();
         this.was_skipped = false;
 
+
         this.first = true;
-        this.duration = duration;
         this.timeElapsed = 0;
         this.accuracy = 0;
         this.wpm = 0;
     }
 
-    get_current() { return this.sequence[this.position]}
-    get_next() {return this.sequence[this.position + 1]}
-    get_at(position: number) { return this.sequence[position]}
+    start() {
+        this.state = 'active';
+        this.start_time = new Date().getTime();
+    }
+
+    nextTest() {
+        this.history.push(this.sequence.map((part) => part.character).join(""));
+        this.testIndex
+        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+            character,
+            state: CharacterState.REMAINING,
+        }));
+    }
+
+    end() {
+        this.timeElapsed = new Date().getTime() - this.start_time!;
+        this.state = 'ended';
+    }
+
+    get_current() { return this.sequence[this.position] }
+    get_next() { return this.sequence[this.position + 1] }
+    get_at(position: number) { return this.sequence[position] }
 }

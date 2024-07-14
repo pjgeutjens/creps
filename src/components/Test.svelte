@@ -1,7 +1,7 @@
 <script lang="ts">
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game } from "$lib/game";
-    import { gameSettings, gameStats, updateStats } from "$lib/stores";
+    import { game, get_at, get_current, get_next } from "$lib/stores";
     import { getRandomTestFunctions, type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
@@ -9,14 +9,19 @@
 
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
+    import { get } from "svelte/store";
 
-    let game: Game;
     let timerRunning = false;
     let timer: NodeJS.Timeout;
 
     let tests: TestFunction[];
 
-    let unsubscribe = gameSettings.subscribe((currentValue) => {
+    let unsubscribe = game.subscribe((currentValue) => {
+        if (currentValue.settings.language === $game.settings.language) {
+            console.log("same")
+            return
+        }
+        console.log("Game changed", currentValue);
         startGame()
     })
 
@@ -26,32 +31,22 @@
 
     function startGame() {
         console.log("Starting game");
-        tests = getRandomTestFunctions($gameSettings.language);
-        $gameStats.active = true;
-        $gameStats.ended = false;
-        $gameStats.accuracy = 0;
-        $gameStats.wordCount = 0;
-        $gameStats.charCount = 0;
-        $gameStats.wordsPerMinute = 0;
-
         timerRunning = false;
         if (timer) {
             clearInterval(timer);
         }
-        game = new Game(tests);
+        $game.start_time = new Date().getTime();
+        $game.state = "active";
     }
 
     function endGame() {
         // gameActive = false;
-        $gameStats.ended = true;
-        const endTime = new Date().getTime();
-        // duration = (endTime - game.start_time!) / 1000;
-
+        $game.state = "ended";
+        $game.end_time = performance.now();
     }
 
     function onkeydown(e: KeyboardEvent) {
-        if (!$gameStats.active && !$gameStats.ended) {
-            $gameStats.active = true;
+        if (!game || $game.state === "ended" || $game.state === "paused") {
             startGame();
             return;
         }
@@ -60,12 +55,12 @@
             timerRunning = true;
             timer = setInterval(() => {
                 // TODO: Fix this randomness with the countdown timer for infinity
-                if ($gameSettings.duration < 150) {
+                if ($game.settings.duration < 150) {
                 }
-                game.timeElapsed++;
-                if (game.timeElapsed >= $gameSettings.duration) {
+                $game.timeElapsed++;
+                if ($game.timeElapsed >= $game.settings.duration) {
                     clearInterval(timer);
-                    if (game.timeElapsed < 900) {
+                    if ($game.timeElapsed < 900) {
                         endGame();
                     }
                 }
@@ -74,38 +69,38 @@
         e.preventDefault();
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
-            if (game.position > 0) {
-                game.position--;
-                game.sequence[game.position].state = CharacterState.REMAINING;
+            if ($game.position > 0) {
+                $game.position--;
+                $game.sequence[$game.position].state = CharacterState.REMAINING;
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
-            let current = game.get_current();
-            let next = game.get_next();
+            let current = get_current($game) ;
+            let next = get_next($game);
             console.log(current, next);
             if (!next || !current) {
-                game.position++;
-                if (game.position >= game.sequence.length) {
-                    game.word_count++;
+                $game.position++;
+                if ($game.position >= $game.sequence.length) {
+                    $game.word_count++;
                     endGame();
                 }
             }
             if (current.character === ";") {
-                switch (game.settings.ignoreSemicolon) {
+                switch ($game.settings.ignoreSemicolon) {
                     case true:
                         console.log("IGNORING SEMICOLON");
                         current.state = CharacterState.SEMI;
-                        game.position++;
+                        $game.position++;
                         break;
                     case false:
                         console.log("ERROR SEMICOLON");
                         current.state = CharacterState.INCORRECT;
-                        game.error_pos.add(game.position);
-                        game.position++;
+                        $game.error_pos.add($game.position);
+                        $game.position++;
                         break;
                 }
-                current = game.get_current();
-                next = game.get_next();
+                current = get_current($game);
+                next = get_next($game);
             }
 
             while (
@@ -115,70 +110,71 @@
             ) {
                 // console.log("SKIP", current.character.charCodeAt(0))
                 current.state = CharacterState.CORRECT;
-                game.position++;
-                current = game.get_current();
-                next = game.get_next();
+                $game.position++;
+                current = get_current($game);
+                next = get_next($game);
             }
         } else if (alphabet.has(e.key)) {
-            game.letter_count++;
-            current = game.get_current();
-            next = game.get_next();
+            $game.letter_count++;
+            current = get_current($game);
+            next = get_next($game);
             console.log(current, next);
             if (current.character === e.key) {
                 current.state = CharacterState.CORRECT;
                 if (e.key === " " || e.key === ";") {
-                    game.word_count++;
+                    $game.word_count++;
                 }
-                game.position++;
+                $game.position++;
             } else if (e.key === " ") {
                 if (
-                    game.position > 0 &&
-                    game.get_at(game.position - 1).character !== " "
+                    $game.position > 0 &&
+                    get_at($game, $game.position - 1).character === " "
                 ) {
-                    let position = game.position;
+                    let position = $game.position;
                     while (
-                        position < game.sequence.length &&
-                        game.get_at(position).character !== " "
+                        position < $game.sequence.length &&
+                        get_at($game, position).character === " "
                     ) {
-                        game.error_pos.add(position);
-                        game.get_at(position).state = CharacterState.SKIPPED;
-                        game.was_skipped = true;
+                        $game.error_pos.add(position);
+                        get_at($game, position).state = CharacterState.SKIPPED;
+                        $game.was_skipped = true;
                         position++;
                     }
-                    game.position = position;
-                    game.position++;
+                    $game.position = position;
+                    $game.position++;
                 }
             } else {
                 current.state = CharacterState.INCORRECT;
-                game.error_pos.add(game.position);
-                game.position++;
+                $game.error_pos.add($game.position);
+                $game.position++;
             }
         }
-        if (game.position > 0 && game.start_time === null) {
-            game.start_time = performance.now();
+        if ($game.position > 0 && $game.start_time === null) {
+            $game.start_time = performance.now();
         }
-        if (game.position >= game.sequence.length) {
-            if (!game.was_skipped) {
+        if ($game.position >= $game.sequence.length) {
+            if (!$game.was_skipped) {
                 // for the last word we don't type space so
                 // we count it at the end unless it's skipped
-                game.word_count++;
+                $game.word_count++;
             }
             endGame();
         }
-        let newgameStats = {
-            wordCount: game.word_count,
-            charCount: game.letter_count,
-            wordsPerMinute: ((game.letter_count / game.timeElapsed) * 60) / 5,
-            accuracy:
-                game.letter_count > 0
-                    ? ((game.letter_count - game.error_pos.size) /
-                          game.letter_count) *
-                      100
-                    : 0,
-            active: $gameStats.active,
-            ended: $gameStats.ended,
-        };
-        updateStats(newgameStats);
+        
+        // let newgameStats = {
+        //     wordCount: $game.word_count,
+        //     charCount: $game.letter_count,
+        //     wordsPerMinute: (($game.letter_count / game.timeElapsed) * 60) / 5,
+        //     accuracy:
+        //         game.letter_count > 0
+        //             ? ((game.letter_count - game.error_pos.size) /
+        //                   game.letter_count) *
+        //               100
+        //             : 0,
+        //     active: $gameStats.active,
+        //     ended: $gameStats.ended,
+        // };
+        // updateStats(newgameStats);
     }
 </script>
 
@@ -252,16 +248,16 @@
 
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
-    <StartGameOverlay onClick={startGame} gameActive={$gameStats.active} />
+    <StartGameOverlay onClick={startGame} gameActive={$game.state === 'active'} />
     <div class="word-list">
         <section id="game">
             <Timer game={game} />
             <LanguageSelect />
         </section>
-        {#if $gameStats.active}
-            {#each game.sequence as letter, index}
+        {#if $game.state === 'active'}
+            {#each $game.sequence as letter, index}
                 <letter
-                    class="{letter.state} {index === game.position
+                    class="{letter.state} {index === $game.position
                         ? 'active'
                         : ''}">{@html letterToHtml(letter.character)}</letter
                 >

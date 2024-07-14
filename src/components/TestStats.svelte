@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-    import { gameStats } from "$lib/stores"; // Adjust the import path as necessary
+    import { game } from "$lib/stores"; // Adjust the import path as necessary
 
 
     let localgameStats = {
@@ -10,8 +10,8 @@
         accuracy: 0,
     };
 
-    const unsubscribe = gameStats.subscribe((value) => {
-            localgameStats = value;
+    const unsubscribe = game.subscribe((value) => {
+            // localgameStats = value.settings;
         });
 
     onDestroy(() => {
