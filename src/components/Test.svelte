@@ -162,7 +162,7 @@
                 // we count it at the end unless it's skipped
                 $game.word_count++;
             }
-            endGame();
+            $game.nextTest();
         }
         
         // let newgameStats = {

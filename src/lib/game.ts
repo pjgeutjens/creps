@@ -128,6 +128,7 @@ export class Game {
     nextTest() {
         this.history.push(this.sequence.map((part) => part.character).join(""));
         this.testIndex++
+        this.position = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
@@ -135,7 +136,6 @@ export class Game {
     }
 
     getSequence() { return this.sequence }
-
 
     end() {
         this.timeElapsed = new Date().getTime() - this.start_time!;
