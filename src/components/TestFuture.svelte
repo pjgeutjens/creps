@@ -4,21 +4,29 @@
 
     const getFunctionSignatureFromText = (text: string) => {
         // return the contents of text up to the first curly bracket
+        let header
         if ($game.language === "python") {
-            return text.split(":")[0].trim();
+            header = text.split(":")[0].replaceAll("def", "").trim();
+        } else if ($game.language === "javascript") {
+            header = text.split("{")[0].replaceAll("function", "").trim();
+        } else if ($game.language === "typescript") {
+            header = text.split("{")[0].replaceAll("function", "").trim();
+        } else if ($game.language === "golang") {
+            header = text.split("{")[0].replaceAll("func", "").trim();
+        } else if ($game.language === "bash") {
+            header = text.split("{")[0].replaceAll("function", "").trim();
         }
-        return text.split("{")[0].trim();
+        return header;
+        
     };
 </script>
 
 <div class="future-container">
     <div class="word-list">
             {#each $game.tests.slice($game.testIndex+1) as next }
-                <div class="word">
-                {#each getFunctionSignatureFromText(next.content) as letter, index}
-                    <letter>{letter}</letter>
-                {/each}
-                </div>
+                <button class="future-button" disabled>
+                {getFunctionSignatureFromText(next.content)}
+                </button>
             {/each}
     </div>
 </div>
@@ -43,6 +51,19 @@
             position: relative;
             top: -65funpx;
         }
+    }
+
+    .future-button {
+        background-color: var(--yellow);
+        opacity: 0.7;
+        color: #333;
+        border: none;
+        /* width: 97%; */
+        border-radius: 8px;
+        padding: 5px;
+        margin: 5px;
+        cursor: none;
+        
     }
     .word-list {
         /* display: flex; */
