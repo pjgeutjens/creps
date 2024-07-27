@@ -102,7 +102,7 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = getRandomTestFunctions(this.language, this.duration / 5);
+        this.tests = getRandomTestFunctions(this.language, 4);
         this.state = 'paused';
         this.testIndex = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
@@ -138,6 +138,7 @@ export class Game {
             accuracy: this.accuracy,
         });
         this.testIndex++
+        this.tests.concat(getRandomTestFunctions(this.language, 1));
         this.position = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
