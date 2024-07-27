@@ -40,13 +40,19 @@ export type GameState = {
     wpm: number,
 };
 
+type HistoryItem = {
+    functionName: string,
+    wpm: number,
+    accuracy: number,
+}
+
 export class Game {
     position: number;
     tests: TestFunction[];
     testIndex: number;
-    state: 'active' | 'ended' | 'paused';
+    state: 'setup' | 'active' | 'ended' | 'paused';
     sequence: Part[];
-    history: string[];
+    history: HistoryItem[];
     ignoreSemicolon: boolean;
     language: string;
     duration: number;
@@ -126,13 +132,21 @@ export class Game {
     }
 
     nextTest() {
-        this.history.push(this.sequence.map((part) => part.character).join(""));
+        this.history.push({
+            functionName: this.testIndex.toString(),
+            wpm: this.wpm,
+            accuracy: this.accuracy,
+        });
         this.testIndex++
         this.position = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
         }));
+    }
+
+    pause() {
+        this.state = 'paused';
     }
 
     getSequence() { return this.sequence }

@@ -1,5 +1,5 @@
 <script>
-    import { game } from "$lib/stores";
+    import { game, gameSettings } from "$lib/stores";
 
         
 </script>
@@ -94,6 +94,12 @@
             class:selected={$gameSettings.language === "bash"}>bash</button
         >
     </div> -->
-        <p>{$game.wpm} {$game.accuracy}</p>
+        <div>
+            {#each $game.history as historyItem, index}
+                <div>
+                    {historyItem.functionName}: {historyItem.wpm}
+                </div>
+            {/each}
+        </div>
 
 </div>
