@@ -5,11 +5,14 @@
     import { session } from "$lib/session";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
+    import type { Game } from "$lib/game";
 
     export let data: LayoutData;
 
     let loading: boolean = true;
     let loggedIn: boolean = false;
+
+    let game: Game;
 
     session.subscribe((cur: any) => {
         loading = cur?.loading;

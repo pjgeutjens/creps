@@ -1,0 +1,105 @@
+<script>
+    import { game, gameSettings } from "$lib/stores";
+
+        
+</script>
+
+<style>
+    .test-config {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        height: 90px;
+        transform: translateX(-50%);
+        width: 60%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #000;
+        opacity: 0.2;
+        border-radius: 8px;
+    }
+
+    .duration-buttons {
+        display: flex;
+        gap: 0px;
+        font-size: 14px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        overflow: hidden;
+        border: 1 px solid #333;
+    }
+    button {
+        display: inline-flex;
+        height: 25px;
+        background-color: #333;
+        color: var(--gray); /* Grey text */
+        padding-bottom: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        border: none;
+        cursor: pointer;
+        &:hover {
+            color: var(--text-color);
+        }
+
+        &.selected {
+            color: var(--yellow); /* Yellow text */
+        }
+    }
+
+    .infinity {
+        position:relative;
+        bottom: 2px;
+        font-size: 18px;
+    }
+
+    .divider {
+        background-color: var(--gray); /* Grey line */
+    }
+
+    /* Additional styles for button hover effect (optional) */
+    button:hover {
+        background-color: #444;
+    }
+    .divider {
+        height: 20px;
+        width: 2px;
+        background-color: #333;
+        margin: 0 20px;
+    }
+</style>
+
+
+<div class="test-config">
+    <!-- <div class="language-buttons">
+        <button
+            on:click={() => ($gameSettings.language = "javascript")}
+            class:selected={$gameSettings.language === "javascript"}>javascript</button
+        >
+        <button
+            on:click={() => ($gameSettings.language = "typescript")}
+            class:selected={$gameSettings.language === "typescript"}>typescript</button
+        >
+        <button
+            on:click={() => ($gameSettings.language = "python")}
+            class:selected={$gameSettings.language === "python"}>python</button
+        >
+        <button
+            on:click={() => ($gameSettings.language = "golang")}
+            class:selected={$gameSettings.language === "golang"}>golang</button
+        >
+        <button
+            on:click={() => ($gameSettings.language = "bash")}
+            class:selected={$gameSettings.language === "bash"}>bash</button
+        >
+    </div> -->
+        <div>
+            {#each $game.history as historyItem, index}
+                <div>
+                    {historyItem.functionName}: {historyItem.wpm}
+                </div>
+            {/each}
+        </div>
+
+</div>

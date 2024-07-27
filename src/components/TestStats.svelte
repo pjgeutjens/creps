@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-    import { gameStats } from "$lib/stores"; // Adjust the import path as necessary
+    import { game } from "$lib/stores"; // Adjust the import path as necessary
 
 
     let localgameStats = {
@@ -10,8 +10,8 @@
         accuracy: 0,
     };
 
-    const unsubscribe = gameStats.subscribe((value) => {
-            localgameStats = value;
+    const unsubscribe = game.subscribe((value) => {
+            // localgameStats = value.settings;
         });
 
     onDestroy(() => {
@@ -22,16 +22,16 @@
 <div class="test-gameStats">
     <div class="gameStats-buttons">
         <button class="selected">wpm</button>
-        <button title="{(localgameStats.wordsPerMinute ? localgameStats.wordsPerMinute : 0).toFixed(2)} wpm">{(localgameStats.wordsPerMinute ? localgameStats.wordsPerMinute : 0).toFixed()}</button>
+        <button title="{($game.wpm ? $game.wpm : 0).toFixed(2)} wpm">{($game.wpm ? $game.wpm : 0).toFixed()}</button>
         <button class="selected">acc</button>
-        <button title="{localgameStats.accuracy.toFixed(2)}%">{localgameStats.accuracy.toFixed()}%</button>
+        <button title="{$game.accuracy.toFixed(2)}%">{$game.accuracy.toFixed()}%</button>
     </div>
     <div class="divider"></div>
     <div class="count-buttons">
         <button class="selected">wc</button>
-        <button>{localgameStats.wordCount}</button>
+        <button>{$game.word_count}</button>
         <button class="selected">cc</button>
-        <button>{localgameStats.charCount}</button>
+        <button>{$game.letter_count}</button>
     </div>
 </div>
 

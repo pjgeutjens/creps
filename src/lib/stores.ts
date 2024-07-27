@@ -1,49 +1,60 @@
-  import type { Game } from '$lib/game';
 import { writable } from 'svelte/store';
+import { getRandomTestFunctions, type TestFunction } from './tests';
+import { Game, type GameSettings, type Part } from './game';
 
-  type GameSettings = { 
-    ignoreSemicolon: boolean 
-    language: string
-    duration: number
+// Custom store that syncs with local storage
+function createLocalStorageStore(key: string, initial: GameSettings) {
+  const { subscribe, set, update } = writable(initial);
+
+  return {
+    subscribe,
+    set: (value: GameSettings) => {
+      localStorage.setItem(key, JSON.stringify(value));
+      set(value);
+    },
+    update
   };
+}
 
-  // Custom store that syncs with local storage
-  function createLocalStorageStore(key: string, initial: GameSettings) {
-    const { subscribe, set, update } = writable(initial);
+const initialGameSettings: GameSettings = {
+  ignoreSemicolon: false,
+  language: 'javascript',
+  duration: 60
+};
 
-    return {
-      subscribe,
-      set: (value: GameSettings) => {
-        localStorage.setItem(key, JSON.stringify(value));
-        set(value);
-      },
-      update
-    };
-  }
 
-  export const gameSettings = createLocalStorageStore('codereps-settings', {ignoreSemicolon: false, language: 'golang', duration: 30}); 
+export const game = writable(new Game("python"));
 
-  type GameStats = {
-    wordCount: number;
-    charCount: number;
-    wordsPerMinute: number;
-    accuracy: number;
-    active: boolean;
-    ended: boolean;
-  };
+export const gameSettings = createLocalStorageStore('codereps-settings', { ignoreSemicolon: false, language: 'golang', duration: 30 });
 
-  export const gameStats = writable<GameStats>({
-    wordCount: 0,
-    charCount: 0,
-    wordsPerMinute: 0,
-    accuracy: 0,
-    active: false,
-    ended: false
-  });
+type GameStats = {
+  wordCount: number;
+  charCount: number;
+  wordsPerMinute: number;
+  accuracy: number;
+  active: boolean;
+  ended: boolean;
+  next: string[];
+};
 
-  // Function to update stats
-  export function updateStats(newStats: GameStats) {
-    gameStats.update(currentStats => {
-      return { ...currentStats, ...newStats };
-    });
-  }
+
+
+export function get_current(gameState: Game): Part {
+  return gameState.sequence[gameState.position];
+}
+
+export function get_next(gameState: Game): Part {
+  return gameState.sequence[gameState.position + 1];
+}
+
+export function get_at(gameState: Game, position: number): Part {
+  return gameState.sequence[position];
+}
+
+export function next(gameState: Game) {
+  gameState.testIndex++;
+}
+
+export function done(gameState: Game) {
+  gameState.state = 'ended';
+}

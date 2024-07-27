@@ -23,7 +23,7 @@ export type TestFunction = {
     language: string;
 }
 
-export function getRandomTestFunction(language:string) {
-    const candidates = tests.filter((t) => t.language === language);
-    return candidates[Math.floor(Math.random() * candidates.length)];
+export function getRandomTestFunctions(language:string, amount:number = 1) {
+    const candidates = tests.filter((t) => t.language === language).sort(() => 0.5 - Math.random());
+    return candidates.slice(0, amount);
 }
