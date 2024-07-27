@@ -16,13 +16,6 @@ function createLocalStorageStore(key: string, initial: GameSettings) {
   };
 }
 
-const initialGameSettings: GameSettings = {
-  ignoreSemicolon: false,
-  language: 'javascript',
-  duration: 60
-};
-
-
 export const game = writable(new Game("python"));
 
 export const gameSettings = createLocalStorageStore('codereps-settings', { ignoreSemicolon: false, language: 'golang', duration: 30 });

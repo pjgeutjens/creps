@@ -69,7 +69,7 @@ export class Game {
 
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
         console.log("l", language)
-        this.tests = getRandomTestFunctions(language, duration / 5);
+        this.tests = getRandomTestFunctions(language, 10);
         this.testIndex = 0;
         this.ignoreSemicolon = ignoreSemicolon;
         this.language = language;
@@ -102,7 +102,7 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = getRandomTestFunctions(this.language, 4);
+        this.tests = getRandomTestFunctions(this.language, 10);
         this.state = 'paused';
         this.testIndex = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
@@ -138,7 +138,7 @@ export class Game {
             accuracy: this.accuracy,
         });
         this.testIndex++
-        this.tests.concat(getRandomTestFunctions(this.language, 1));
+        this.tests = this.tests.concat(getRandomTestFunctions(this.language, 1));
         this.position = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,

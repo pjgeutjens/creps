@@ -1,105 +1,86 @@
-<script>
-    import { game, gameSettings } from "$lib/stores";
-
-        
+<script lang="ts">
+    import { game } from "$lib/stores";
 </script>
 
+<div class="future-container">
+    <div class="word-list">
+            {#each $game.history as prev }
+                <button class="history-button" disabled></button>
+            {/each}
+    </div>
+</div>
+
 <style>
-    .test-config {
+    .future-container {
         position: absolute;
         top: 20%;
         left: 50%;
-        height: 90px;
+        height: 120px;
         transform: translateX(-50%);
+        /* padding: 10px; */
         width: 60%;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        background-color: #000;
-        opacity: 0.2;
+        text-align: center;
         border-radius: 8px;
+        border-radius: 8px;
+        &::before {
+            /* display the text 'up next' at the top of the div */
+            /* content: "next"; */
+            position: relative;
+            top: -65funpx;
+        }
     }
 
-    .duration-buttons {
-        display: flex;
-        gap: 0px;
-        font-size: 14px;
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-        overflow: hidden;
-        border: 1 px solid #333;
-    }
-    button {
-        display: inline-flex;
-        height: 25px;
-        background-color: #333;
-        color: var(--gray); /* Grey text */
-        padding-bottom: 5px;
-        padding-left: 5px;
-        padding-right: 5px;
+    .history-button {
+        background-color: var(--yellow);
+        opacity: 0.7;
+        color: #333;
         border: none;
-        cursor: pointer;
-        &:hover {
+        width: 40px;
+        border-radius: 8px;
+        padding: 5px;
+        margin: 5px;
+        cursor: none;
+        
+    }
+    .word-list {
+        /* display: flex; */
+        /* display: grid; */
+        /* gap: 10px; */
+        margin-bottom: 20px;
+    }
+
+    .word::before {
+        content: "-> ";
+    }
+    letter {
+        color: var(----text-color);
+        position: relative;
+        font-size: 22px;
+
+        &.active::before {
+            content: "|";
+            color: var(--yellow);
+            font-size: 1em;
+            position: absolute;
+            left: -50%;
+            animation: 1s blink infinite ease-in-out;
+        }
+        &.is-last::before {
+            left: 65%;
+        }
+        &.correct {
             color: var(--text-color);
         }
-
-        &.selected {
-            color: var(--yellow); /* Yellow text */
+        &.incorrect {
+            color: var(--red);
+        }
+        &.remaining {
+            color: var(--gray);
+        }
+        &.skipped {
+            border-bottom: 1px solid var(--red);
         }
     }
-
-    .infinity {
-        position:relative;
-        bottom: 2px;
-        font-size: 18px;
-    }
-
-    .divider {
-        background-color: var(--gray); /* Grey line */
-    }
-
-    /* Additional styles for button hover effect (optional) */
-    button:hover {
-        background-color: #444;
-    }
-    .divider {
-        height: 20px;
-        width: 2px;
-        background-color: #333;
-        margin: 0 20px;
-    }
 </style>
-
-
-<div class="test-config">
-    <!-- <div class="language-buttons">
-        <button
-            on:click={() => ($gameSettings.language = "javascript")}
-            class:selected={$gameSettings.language === "javascript"}>javascript</button
-        >
-        <button
-            on:click={() => ($gameSettings.language = "typescript")}
-            class:selected={$gameSettings.language === "typescript"}>typescript</button
-        >
-        <button
-            on:click={() => ($gameSettings.language = "python")}
-            class:selected={$gameSettings.language === "python"}>python</button
-        >
-        <button
-            on:click={() => ($gameSettings.language = "golang")}
-            class:selected={$gameSettings.language === "golang"}>golang</button
-        >
-        <button
-            on:click={() => ($gameSettings.language = "bash")}
-            class:selected={$gameSettings.language === "bash"}>bash</button
-        >
-    </div> -->
-        <div>
-            {#each $game.history as historyItem, index}
-                <div>
-                    {historyItem.functionName}: {historyItem.wpm}
-                </div>
-            {/each}
-        </div>
-
-</div>

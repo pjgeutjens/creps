@@ -31,7 +31,6 @@
     });
 
     function startGame(language: string = "javascript") {
-        console.log("Starting game");
         timerRunning = false;
         if (timer) {
             clearInterval(timer);
@@ -51,7 +50,7 @@
 
     function onkeydown(e: KeyboardEvent) {
         if (!game || $game.state === "ended" || $game.state === "paused") {
-            startGame();
+            startGame($game.language);
             return;
         }
         let current, next;
