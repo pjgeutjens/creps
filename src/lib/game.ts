@@ -108,6 +108,21 @@ export class Game {
         this.error_pos = new Set();
         this.letter_count = 0;
         this.word_count = 0;
+        this.timeElapsed = 0;
+    }
+
+    updateStats() {
+        this.accuracy = this.calculateAccuracy();
+        this.wpm = this.calculateWPM();
+
+    }
+
+    calculateAccuracy() {
+        return this.letter_count > 0 ? ((this.letter_count - this.error_pos.size) /  this.letter_count) * 100 : 0;
+    }
+
+    calculateWPM() {
+        return (this.letter_count / this.timeElapsed) * 60 / 5;
     }
 
     nextTest() {

@@ -179,6 +179,7 @@
         //     ended: $gameStats.ended,
         // };
         // updateStats(newgameStats);
+        $game.updateStats();
     }
 </script>
 

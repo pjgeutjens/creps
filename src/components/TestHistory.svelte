@@ -1,5 +1,5 @@
 <script>
-    import { gameSettings } from "$lib/stores";
+    import { game } from "$lib/stores";
 
         
 </script>
@@ -94,6 +94,6 @@
             class:selected={$gameSettings.language === "bash"}>bash</button
         >
     </div> -->
-        <p>{$gameSettings.duration}</p>
+        <p>{$game.wpm} {$game.accuracy}</p>
 
 </div>
