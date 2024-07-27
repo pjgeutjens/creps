@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { gameSettings } from "$lib/stores";
+    import { game } from "$lib/stores";
     // import { startGame } from "./Test.svelte";
     let showLanguageModel = false;
 
@@ -39,29 +39,29 @@
 </style>
 <button id="language-select" on:click={() => showLanguageModel=true}>
     <i class="fa-solid fa-code"></i>
-    {$gameSettings.language}
+    {$game.language}
 </button>
 {#if showLanguageModel}
 <div id="language-select-modal">
         <button class="select-button"
-            on:click={() => {$gameSettings.language = "javascript"; showLanguageModel = false}}
-            class:selected={$gameSettings.language === "javascript"}>javascript</button
+            on:click={() => { $game.language = "javascript"; $game.reset(); showLanguageModel = false}}
+            class:selected={$game.language === "javascript"}>javascript</button
         >
         <button class="select-button"
-        on:click={() => {$gameSettings.language = "typescript"; showLanguageModel = false}}
-            class:selected={$gameSettings.language === "typescript"}>typescript</button
+        on:click={() => {console.log($game);$game.language = "typescript"; $game.reset(); showLanguageModel = false}}
+            class:selected={$game.language === "typescript"}>typescript</button
         >
         <button class="select-button"
-        on:click={() => {$gameSettings.language = "python"; showLanguageModel = false}}
-            class:selected={$gameSettings.language === "python"}>python</button
+        on:click={() => {$game.language = "python"; $game.reset(); showLanguageModel = false}}
+            class:selected={$game.language === "python"}>python</button
         >
         <button class="select-button"
-        on:click={() => {$gameSettings.language = "golang"; showLanguageModel = false}}
-            class:selected={$gameSettings.language === "golang"}>golang</button
+        on:click={() => {$game.language = "golang"; $game.reset(); showLanguageModel = false}}
+            class:selected={$game.language === "golang"}>golang</button
         >
         <button class="select-button"
-        on:click={() => {$gameSettings.language = "bash"; showLanguageModel = false}}
-            class:selected={$gameSettings.language === "bash"}>bash</button
+        on:click={() => {$game.language = "bash"; $game.reset(); showLanguageModel = false}}
+            class:selected={$game.language === "bash"}>bash</button
         >
 </div>
 {/if}

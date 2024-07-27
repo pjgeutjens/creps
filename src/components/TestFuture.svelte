@@ -4,7 +4,7 @@
 
     const getFunctionSignatureFromText = (text: string) => {
         // return the contents of text up to the first curly bracket
-        if ($game.settings.language === "python") {
+        if ($game.language === "python") {
             return text.split(":")[0];
         }
         return text.split("{")[0];
@@ -13,13 +13,13 @@
 
 <div class="future-container">
     <div class="word-list">
-        <div class="word">
             {#each $game.tests.slice(1) as next }
+                <div class="word">
                 {#each getFunctionSignatureFromText(next.content) as letter, index}
                     <letter>{letter}</letter>
                 {/each}
+                </div>
             {/each}
-        </div>
     </div>
 </div>
 
@@ -40,8 +40,8 @@
         &::before {
             /* display the text 'up next' at the top of the div */
             content: "next";
-            position: absolute;
-            top: 0px;
+            position: relative;
+            top: -65funpx;
         }
     }
     .word-list {

@@ -1,4 +1,3 @@
-import { get } from "svelte/store";
 import { getRandomTestFunctions, type TestFunction } from "./tests";
 
 export enum CharacterState {
@@ -16,9 +15,9 @@ export type Part = {
 
 
 export type GameSettings = {
-    ignoreSemicolon: boolean
-    language: string
-    duration: number
+    ignoreSemicolon?: boolean
+    language?: string
+    duration?: number
 };
 
 
@@ -48,10 +47,13 @@ export class Game {
     state: 'active' | 'ended' | 'paused';
     sequence: Part[];
     history: string[];
-    settings: GameSettings;
+    ignoreSemicolon: boolean;
+    language: string;
+    duration: number;
     letter_count: number;
     word_count: number;
     start_time: number | null;
+    end_time: number | null;
     error_pos: Set<number>;
     was_skipped: boolean;
     first: boolean;
@@ -59,10 +61,13 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(tests: TestFunction[], settings: GameSettings | null = null) {
-        this.tests = getRandomTestFunctions(settings ? settings.language : 'golang', 4);
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
+        console.log("l", language)
+        this.tests = getRandomTestFunctions(language, 4);
         this.testIndex = 0;
-        this.settings = settings ? settings : { ignoreSemicolon: false, language: 'golang', duration: 30 };
+        this.ignoreSemicolon = ignoreSemicolon;
+        this.language = language;
+        this.duration = duration;
         this.position = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
@@ -74,6 +79,7 @@ export class Game {
         this.letter_count = 0;
         this.word_count = 0;
         this.start_time = new Date().getTime();
+        this.end_time = null;
         this.was_skipped = false;
 
 
@@ -88,14 +94,33 @@ export class Game {
         this.start_time = new Date().getTime();
     }
 
+    reset() {
+        console.log("resetting")
+        this.tests = getRandomTestFunctions(this.language, 4);
+        this.state = 'paused';
+        this.testIndex = 0;
+        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+            character,
+            state: CharacterState.REMAINING,
+        }));
+        this.position = 0;
+        this.history = [];
+        this.error_pos = new Set();
+        this.letter_count = 0;
+        this.word_count = 0;
+    }
+
     nextTest() {
         this.history.push(this.sequence.map((part) => part.character).join(""));
-        this.testIndex
+        this.testIndex++
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
         }));
     }
+
+    getSequence() { return this.sequence }
+
 
     end() {
         this.timeElapsed = new Date().getTime() - this.start_time!;

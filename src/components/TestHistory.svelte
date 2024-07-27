@@ -15,7 +15,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #fff;
+        background-color: #000;
         opacity: 0.2;
         border-radius: 8px;
     }
@@ -94,5 +94,6 @@
             class:selected={$gameSettings.language === "bash"}>bash</button
         >
     </div> -->
+        <p>{$gameSettings.duration}</p>
 
 </div>

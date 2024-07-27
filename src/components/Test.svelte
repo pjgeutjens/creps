@@ -16,27 +16,31 @@
 
     let tests: TestFunction[];
 
+
     let unsubscribe = game.subscribe((currentValue) => {
-        if (currentValue.settings.language === $game.settings.language) {
+        if (currentValue.language === $game.language) {
             console.log("same")
             return
         }
         console.log("Game changed", currentValue);
-        startGame()
+        startGame(currentValue.language)
     })
 
     onDestroy(() => {
         unsubscribe();
     });
 
-    function startGame() {
+    function startGame(language: string = "javascript") {
         console.log("Starting game");
         timerRunning = false;
         if (timer) {
             clearInterval(timer);
         }
         $game.start_time = new Date().getTime();
+        $game.reset();
         $game.state = "active";
+        $game.language = language;
+
     }
 
     function endGame() {
@@ -55,10 +59,10 @@
             timerRunning = true;
             timer = setInterval(() => {
                 // TODO: Fix this randomness with the countdown timer for infinity
-                if ($game.settings.duration < 150) {
+                if ($game.duration < 150) {
                 }
                 $game.timeElapsed++;
-                if ($game.timeElapsed >= $game.settings.duration) {
+                if ($game.timeElapsed >= $game.duration) {
                     clearInterval(timer);
                     if ($game.timeElapsed < 900) {
                         endGame();
@@ -86,7 +90,7 @@
                 }
             }
             if (current.character === ";") {
-                switch ($game.settings.ignoreSemicolon) {
+                switch ($game.ignoreSemicolon) {
                     case true:
                         console.log("IGNORING SEMICOLON");
                         current.state = CharacterState.SEMI;
@@ -248,10 +252,10 @@
 
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
-    <StartGameOverlay onClick={startGame} gameActive={$game.state === 'active'} />
+    <StartGameOverlay onClick={() => startGame($game.language)} gameActive={$game.state === 'active'} />
     <div class="word-list">
         <section id="game">
-            <Timer game={game} />
+            <Timer />
             <LanguageSelect />
         </section>
         {#if $game.state === 'active'}
