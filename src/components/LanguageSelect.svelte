@@ -2,7 +2,7 @@
 
     import { game } from "$lib/stores";
     // import { startGame } from "./Test.svelte";
-    let showLanguageModel = false;
+    let showLanguageModal = false;
 
     async function onLanguageChange() {
     //     await startGame();
@@ -37,30 +37,31 @@
         cursor: pointer;
     }
 </style>
-<button id="language-select" on:click={() => showLanguageModel=true}>
+<!-- <svelte:window on:click={() => {if (showLanguageModal) showLanguageModal = false}} /> -->
+<button id="language-select" on:click={() => showLanguageModal=!showLanguageModal}>
     <i class="fa-solid fa-code"></i>
     {$game.language}
 </button>
-{#if showLanguageModel}
+{#if showLanguageModal}
 <div id="language-select-modal">
         <button class="select-button"
-            on:click={() => { $game.language = "javascript"; $game.reset(); showLanguageModel = false}}
+            on:click={() => { $game.language = "javascript"; $game.reset(); showLanguageModal = false}}
             class:selected={$game.language === "javascript"}>javascript</button
         >
         <button class="select-button"
-        on:click={() => {console.log($game);$game.language = "typescript"; $game.reset(); showLanguageModel = false}}
+        on:click={() => {console.log($game);$game.language = "typescript"; $game.reset(); showLanguageModal = false}}
             class:selected={$game.language === "typescript"}>typescript</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "python"; $game.reset(); showLanguageModel = false}}
+        on:click={() => {$game.language = "python"; $game.reset(); showLanguageModal = false}}
             class:selected={$game.language === "python"}>python</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "golang"; $game.reset(); showLanguageModel = false}}
+        on:click={() => {$game.language = "golang"; $game.reset(); showLanguageModal = false}}
             class:selected={$game.language === "golang"}>golang</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "bash"; $game.reset(); showLanguageModel = false}}
+        on:click={() => {$game.language = "bash"; $game.reset(); showLanguageModal = false}}
             class:selected={$game.language === "bash"}>bash</button
         >
 </div>
