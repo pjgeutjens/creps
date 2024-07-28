@@ -3,7 +3,7 @@
     import { get } from 'svelte/store'
 
     function setRandomTheme() {
-        const themes = ["nord", "nord_light", "monkey"].filter((theme) => theme !== $gameSettings.theme);
+        const themes = ["nord", "nord_light", "monkey", "monkey_light"].filter((theme) => theme !== $gameSettings.theme);
         const currentSettings = get(gameSettings)
         const randomIndex = Math.floor(Math.random() * themes.length);
         const newSettings = {...currentSettings, theme: themes[randomIndex]}

@@ -8,6 +8,8 @@
     import Nord from "../components/themes/nord.svelte";
     import NordLight from "../components/themes/nord_light.svelte";
     import Monkey from "../components/themes/monkey.svelte";
+    import MonkeyLight from "../components/themes/monkey_light.svelte";
+
     import { gameSettings } from "$lib/stores";
 
 </script>
@@ -22,6 +24,10 @@
 
 {#if $gameSettings.theme === "monkey"}
     <Monkey />
+{/if}
+
+{#if $gameSettings.theme === "monkey_light"}
+    <MonkeyLight />
 {/if}
 <TestConfig />
 <TestHistory />

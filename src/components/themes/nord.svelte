@@ -1,4 +1,5 @@
 <svelte:head>
+    <!-- Nord Theme -->
     <style>
         :root {
             --color-scheme: light dark;

@@ -1,6 +1,5 @@
-// Nord Theme
-
 <svelte:head>
+    <!-- Monkey Theme -->
     <style>
         :root {
             --color-scheme: light dark;
