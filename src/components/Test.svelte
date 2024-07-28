@@ -60,12 +60,10 @@
                 // TODO: Fix this randomness with the countdown timer for infinity
                 $game.testTimeElapsed++;
                 $game.totalTimeElapsed++;
-                if ($game.duration < 150) {
+                if ($game.duration > 0) {
                     if ($game.totalTimeElapsed >= $game.duration) {
                     clearInterval(timer);
-                    if ($game.totalTimeElapsed < 900) {
-                        endGame();
-                    }
+                    endGame();
                 }
                 }
 
