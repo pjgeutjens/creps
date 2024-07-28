@@ -53,7 +53,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #333;
+        background-color: var(--text-color-dark);
         border-radius: 8px;
     }
     .gameStats-buttons {
@@ -65,7 +65,7 @@
         border-top-left-radius: 8px;
         border-bottom-left-radius: 8px;
         overflow: hidden;
-        border: 1 px solid #333;
+        border: 1 px solid var(--text-color-dark);
     }
 
     .count-buttons {
@@ -75,13 +75,13 @@
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
         overflow: hidden;
-        border: 1 px solid #333;
+        border: 1 px solid var(--text-color-dark);
     }
     button {
         display: inline-flex;
         height: 25px;
-        background-color: #333;
-        color: var(--gray); /* Grey text */
+        background-color: var(--text-color-dark);
+        color: var(--text-color-subdued); /* Grey text */
         padding-bottom: 5px;
         padding-left: 5px;
         padding-right: 5px;
@@ -89,11 +89,11 @@
         cursor: pointer;
     }
     .selected {
-        color: var(--yellow); /* Yellow text */
+        color: var(--main-color); /* Yellow text */
     }
 
     .divider {
-        background-color: var(--gray); /* Grey line */
+        background-color: var(--text-color-subdued); /* Grey line */
     }
 
     /* Additional styles for button hover effect (optional) */
@@ -103,7 +103,7 @@
     .divider {
         height: 20px;
         width: 2px;
-        background-color: #333;
+        background-color: var(--text-color-dark);
         margin: 0 20px;
     }
 </style>

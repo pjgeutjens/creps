@@ -70,7 +70,7 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 999) {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
         console.log("l", language)
         this.tests = getRandomTestFunctions(language, 10);
         this.testIndex = 0;

@@ -13,7 +13,7 @@
     .logo {
       font-size: 1.5rem;
       font-weight: bold;
-      color: #333;
+      color: var(--text-color-dark);
     }
     .nav-links {
       list-style: none;
@@ -21,7 +21,7 @@
       gap: 1rem;
     }
     .nav-link {
-      color: #333;
+      color: var(--text-color-dark);
       text-decoration: none;
       font-size: 1rem;
     }

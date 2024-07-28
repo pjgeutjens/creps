@@ -33,9 +33,9 @@
     }
 
     .history-button {
-        background-color: var(--yellow);
+        background-color: var(--main-color);
         opacity: 0.7;
-        color: #333;
+        color: var(--text-color-dark);
         border: none;
         width: 40px;
         border-radius: 8px;
@@ -61,7 +61,7 @@
 
         &.active::before {
             content: "|";
-            color: var(--yellow);
+            color: var(--main-color);
             font-size: 1em;
             position: absolute;
             left: -50%;
@@ -77,7 +77,7 @@
             color: var(--red);
         }
         &.remaining {
-            color: var(--gray);
+            color: var(--text-color-subdued);
         }
         &.skipped {
             border-bottom: 1px solid var(--red);

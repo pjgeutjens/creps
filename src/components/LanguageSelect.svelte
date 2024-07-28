@@ -19,7 +19,7 @@
         width: 200px;
         height: 220px;
         background-color: var(--backround-color);
-        border: 1px solid var(--yellow);
+        border: 1px solid var(--main-color);
         border-radius: 8px;
         z-index: 100;
     }
@@ -27,8 +27,8 @@
         color: var(--text-color);
     }
     .select-button {
-        background-color: var(--yellow);
-        color: #333;
+        background-color: var(--main-color);
+        color: var(--text-color-dark);
         border: none;
         width: 97%;
         border-radius: 8px;

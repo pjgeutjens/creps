@@ -3,7 +3,7 @@
 </script>
 <style>
         time {
-        color: var(--yellow);
+        color: var(--main-color);
     }
 </style>
 

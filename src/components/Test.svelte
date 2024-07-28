@@ -2,7 +2,7 @@
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game } from "$lib/game";
     import { game, get_at, get_current, get_next } from "$lib/stores";
-    import { getRandomTestFunctions, type TestFunction } from "$lib/tests";
+    import { type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
     import LanguageSelect from "./LanguageSelect.svelte";
@@ -16,15 +16,14 @@
 
     let tests: TestFunction[];
 
-
     let unsubscribe = game.subscribe((currentValue) => {
         if (currentValue.language === $game.language) {
-            console.log("same")
-            return
+            console.log("same");
+            return;
         }
         console.log("Game changed", currentValue);
-        startGame(currentValue.language)
-    })
+        startGame(currentValue.language);
+    });
 
     onDestroy(() => {
         unsubscribe();
@@ -39,7 +38,6 @@
         $game.reset();
         $game.state = "active";
         $game.language = language;
-
     }
 
     function endGame() {
@@ -62,15 +60,14 @@
                 $game.totalTimeElapsed++;
                 if ($game.duration > 0) {
                     if ($game.totalTimeElapsed >= $game.duration) {
-                    clearInterval(timer);
-                    endGame();
+                        clearInterval(timer);
+                        endGame();
+                    }
                 }
-                }
-
             }, 1000);
         }
         e.preventDefault();
-        if (e.key.toLowerCase() === "backspace") { 
+        if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if ($game.position > 0) {
                 $game.position--;
@@ -78,7 +75,7 @@
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
-            let current = get_current($game) ;
+            let current = get_current($game);
             let next = get_next($game);
             console.log(current, next);
             if (!next || !current) {
@@ -128,6 +125,21 @@
                     $game.word_count++;
                 }
                 $game.position++;
+            } else if (e.key === " " && current.character !== " ") {
+                // TODO: refactor this to make it more readable
+                while (![" ", "_", "("].includes(current.character)) {
+                    current.state = CharacterState.SKIPPED;
+                    $game.error_pos.add($game.position);
+                    $game.was_skipped = true;
+                    $game.position++;
+                    current = get_current($game);
+                    next = get_next($game);
+                }
+                if (current.character === " ") {
+                    $game.position++;
+                    current = get_current($game);
+                    next = get_next($game);
+                }
             } else if (e.key === " ") {
                 if (
                     $game.position > 0 &&
@@ -163,7 +175,7 @@
             }
             $game.nextTest();
         }
-        
+
         // let newgameStats = {
         //     wordCount: $game.word_count,
         //     charCount: $game.letter_count,
@@ -182,6 +194,28 @@
     }
 </script>
 
+<svelte:window on:keydown={onkeydown} />
+<div class="game-container">
+    <StartGameOverlay
+        onClick={() => startGame($game.language)}
+        gameActive={$game.state === "active"}
+    />
+    <div class="word-list">
+        <section id="game">
+            <Timer />
+            <LanguageSelect />
+        </section>
+        {#if $game.state === "active"}
+            {#each $game.sequence as letter, index}
+                <letter
+                    class="{letter.state} {index === $game.position
+                        ? 'active'
+                        : ''}">{@html letterToHtml(letter.character)}</letter
+                >
+            {/each}
+        {/if}
+    </div>
+</div>
 
 <style>
     .game-container {
@@ -220,13 +254,13 @@
     }
 
     letter {
-        color: var(--gray);
+        color: var(--text-color-subdued);
         position: relative;
         font-size: 22px;
 
         &.active::before {
             content: "|";
-            color: var(--yellow);
+            color: var(--main-color);
             font-size: 1em;
             position: absolute;
             left: -50%;
@@ -242,30 +276,10 @@
             color: var(--red);
         }
         &.remaining {
-            color: var(--gray);
+            color: var(--text-color-subdued);
         }
         &.skipped {
             border-bottom: 1px solid var(--red);
         }
     }
 </style>
-
-<svelte:window on:keydown={onkeydown} />
-<div class="game-container">
-    <StartGameOverlay onClick={() => startGame($game.language)} gameActive={$game.state === 'active'} />
-    <div class="word-list">
-        <section id="game">
-            <Timer />
-            <LanguageSelect />
-        </section>
-        {#if $game.state === 'active'}
-            {#each $game.sequence as letter, index}
-                <letter
-                    class="{letter.state} {index === $game.position
-                        ? 'active'
-                        : ''}">{@html letterToHtml(letter.character)}</letter
-                >
-            {/each}
-        {/if}
-    </div>
-</div>
