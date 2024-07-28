@@ -1,5 +1,5 @@
 <script>
-    import { gameSettings } from "$lib/stores";
+    import { game } from "$lib/stores";
 
         
 </script>
@@ -73,43 +73,43 @@
 <div class="test-config">
     <!-- <div class="language-buttons">
         <button
-            on:click={() => ($gameSettings.language = "javascript")}
-            class:selected={$gameSettings.language === "javascript"}>javascript</button
+            on:click={() => ($game.language = "javascript")}
+            class:selected={$game.language === "javascript"}>javascript</button
         >
         <button
-            on:click={() => ($gameSettings.language = "typescript")}
-            class:selected={$gameSettings.language === "typescript"}>typescript</button
+            on:click={() => ($game.language = "typescript")}
+            class:selected={$game.language === "typescript"}>typescript</button
         >
         <button
-            on:click={() => ($gameSettings.language = "python")}
-            class:selected={$gameSettings.language === "python"}>python</button
+            on:click={() => ($game.language = "python")}
+            class:selected={$game.language === "python"}>python</button
         >
         <button
-            on:click={() => ($gameSettings.language = "golang")}
-            class:selected={$gameSettings.language === "golang"}>golang</button
+            on:click={() => ($game.language = "golang")}
+            class:selected={$game.language === "golang"}>golang</button
         >
         <button
-            on:click={() => ($gameSettings.language = "bash")}
-            class:selected={$gameSettings.language === "bash"}>bash</button
+            on:click={() => ($game.language = "bash")}
+            class:selected={$game.language === "bash"}>bash</button
         >
     </div> -->
     <div class="divider"></div>
     <div class="duration-buttons">
         <button
-            on:click={() => ($gameSettings.duration = 30)}
-            class:selected={$gameSettings.duration === 30}>30</button
+            on:click={() => ($game.duration = 30)}
+            class:selected={$game.duration === 30}>30</button
         >
         <button
-            on:click={() => ($gameSettings.duration = 60)}
-            class:selected={$gameSettings.duration === 60}>60</button
+            on:click={() => ($game.duration = 60)}
+            class:selected={$game.duration === 60}>60</button
         >
         <button
-            on:click={() => ($gameSettings.duration = 120)}
-            class:selected={$gameSettings.duration === 120}>120</button
+            on:click={() => ($game.duration = 120)}
+            class:selected={$game.duration === 120}>120</button
         >
         <button
-            on:click={() => ($gameSettings.duration = 999)}
-            class:selected={$gameSettings.duration === 999} class="infinity">∞</button
+            on:click={() => ($game.duration = 999)}
+            class:selected={$game.duration === 999} class="infinity">∞</button
         >
     </div>
 </div>
