@@ -1,5 +1,3 @@
-// Nord Theme
-
 <svelte:head>
     <style>
         :root {

@@ -27,6 +27,7 @@
 	"type": "module",
 	"dependencies": {
 		"@fortawesome/fontawesome-free": "^6.5.2",
-		"firebase": "^10.12.3"
+		"firebase": "^10.12.3",
+		"svelte-persisted-store": "^0.11.0"
 	}
 }

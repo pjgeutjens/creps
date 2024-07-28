@@ -1,35 +1,23 @@
 import { writable } from 'svelte/store';
-import { getRandomTestFunctions, type TestFunction } from './tests';
-import { Game, type GameSettings, type Part } from './game';
+import { Game, type Part } from './game';
+import { persisted } from 'svelte-persisted-store';
 
-// Custom store that syncs with local storage
-function createLocalStorageStore(key: string, initial: GameSettings) {
-  const { subscribe, set, update } = writable(initial);
 
-  return {
-    subscribe,
-    set: (value: GameSettings) => {
-      localStorage.setItem(key, JSON.stringify(value));
-      set(value);
-    },
-    update
-  };
-}
+export type GameSettings = {
+  ignoreSemicolon?: boolean
+  language?: string
+  duration?: number
+  theme?: string
+};
 
 export const game = writable(new Game("python"));
 
-export const gameSettings = createLocalStorageStore('codereps-settings', { ignoreSemicolon: false, language: 'golang', duration: 30 });
-
-type GameStats = {
-  wordCount: number;
-  charCount: number;
-  wordsPerMinute: number;
-  accuracy: number;
-  active: boolean;
-  ended: boolean;
-  next: string[];
-};
-
+export const gameSettings = persisted('settings', { 
+  ignoreSemicolon: false, 
+  language: 'golang', 
+  duration: 30, 
+  theme: 'nord'
+});
 
 
 export function get_current(gameState: Game): Part {

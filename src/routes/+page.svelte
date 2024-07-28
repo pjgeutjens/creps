@@ -6,36 +6,23 @@
     import TestFuture from "../components/TestFuture.svelte";
 
     import Nord from "../components/themes/nord.svelte";
-<<<<<<< HEAD
     import NordLight from "../components/themes/nord_light.svelte";
     import Monkey from "../components/themes/monkey.svelte";
+    import { gameSettings } from "$lib/stores";
 
-    let theme = "nord";
-=======
-    import Monkey from "../components/themes/monkey.svelte";
-
-    let theme = "monkey";
->>>>>>> 0aa40a35d0ada82efb9a27f2366a1dd41c6d8eb3
 </script>
 
-{#if theme === "nord"}
+{#if $gameSettings.theme === "nord"}
     <Nord />
 {/if}
-<<<<<<< HEAD
 
-{#if theme === "nord_light"}
+{#if $gameSettings.theme === "nord_light"}
     <NordLight />
 {/if}
 
-{#if theme === "monkey"}
+{#if $gameSettings.theme === "monkey"}
     <Monkey />
 {/if}
-{theme}
-=======
-{#if theme === "monkey"}
-    <Monkey />
-{/if}
->>>>>>> 0aa40a35d0ada82efb9a27f2366a1dd41c6d8eb3
 <TestConfig />
 <TestHistory />
 <TestFuture />

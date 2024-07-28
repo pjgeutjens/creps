@@ -14,13 +14,6 @@ export type Part = {
 };
 
 
-export type GameSettings = {
-    ignoreSemicolon?: boolean
-    language?: string
-    duration?: number
-};
-
-
 export type GameState = {
     position: number;
     sequence: Part[];
