@@ -22,9 +22,16 @@
 <div class="test-gameStats">
     <div class="gameStats-buttons">
         <button class="selected">wpm</button>
-        <button title="{($game.wpm ? $game.wpm : 0).toFixed(2)} wpm">{($game.wpm ? $game.wpm : 0).toFixed()}</button>
+        <button title="{($game.calculateWPM() ? $game.calculateWPM() : 0).toFixed(2)} wpm">{($game.calculateWPM() ? $game.calculateWPM() : 0).toFixed()}</button>
         <button class="selected">acc</button>
-        <button title="{$game.accuracy.toFixed(2)}%">{$game.accuracy.toFixed()}%</button>
+        <button title="{$game.calculateAccuracy().toFixed(2)}%">{$game.calculateAccuracy().toFixed()}%</button>
+        <button class="selected">gwpm</button>
+        <button title="{($game.calculateGlobalAccuracy() ? $game.calculateGlobalAccuracy() : 0).toFixed(2)} wpm">{($game.calculateGlobalAccuracy() ? $game.calculateGlobalAccuracy() : 0).toFixed()}</button>
+        <button class="selected">gacc</button>
+        <button title="{$game.calculateGlobalAccuracy().toFixed(2)}%">{$game.calculateGlobalAccuracy().toFixed()}%</button>
+
+        
+
     </div>
     <div class="divider"></div>
     <div class="count-buttons">

@@ -42,6 +42,8 @@ export type GameState = {
 
 type HistoryItem = {
     functionName: string,
+    testLength: number,
+    errors: number,
     wpm: number,
     accuracy: number,
 }
@@ -63,11 +65,12 @@ export class Game {
     error_pos: Set<number>;
     was_skipped: boolean;
     first: boolean;
-    timeElapsed: number;
+    testTimeElapsed: number;
+    totalTimeElapsed: number;
     accuracy: number;
     wpm: number;
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 999) {
         console.log("l", language)
         this.tests = getRandomTestFunctions(language, 10);
         this.testIndex = 0;
@@ -90,7 +93,8 @@ export class Game {
 
 
         this.first = true;
-        this.timeElapsed = 0;
+        this.testTimeElapsed = 0;
+        this.totalTimeElapsed = 0;
         this.accuracy = 0;
         this.wpm = 0;
     }
@@ -114,7 +118,8 @@ export class Game {
         this.error_pos = new Set();
         this.letter_count = 0;
         this.word_count = 0;
-        this.timeElapsed = 0;
+        this.testTimeElapsed = 0;
+        this.totalTimeElapsed = 0;
     }
 
     updateStats() {
@@ -128,18 +133,45 @@ export class Game {
     }
 
     calculateWPM() {
-        return (this.letter_count / this.timeElapsed) * 60 / 5;
+        console.log(this.letter_count, " / ", this.testTimeElapsed)
+        return (this.letter_count / this.testTimeElapsed) * 60 / 5;
     }
+
+    calculateGlobalAccuracy() {
+        if (this.history.length === 0) {
+            return this.calculateAccuracy();
+        }
+        const totalLength = this.history.reduce((acc, item) => acc + item.testLength, 0);
+        const totalErrors = this.history.reduce((acc, item) => acc + item.errors, 0);
+        const totalCorrect = totalLength - totalErrors;
+        return totalCorrect / totalLength * 100;
+    }
+
+    calculateGlobalWPM() {
+        if (this.history.length === 0) {
+            return this.calculateWPM();
+        }
+        const totalLength = this.history.reduce((acc, item) => acc + item.testLength, 0);
+        const weighedWPM = this.history.reduce((acc, item) => acc + item.wpm * item.testLength, 0);
+        return weighedWPM / totalLength;
+    }
+
 
     nextTest() {
         this.history.push({
             functionName: this.testIndex.toString(),
             wpm: this.wpm,
             accuracy: this.accuracy,
+            errors: this.error_pos.size,
+            testLength: this.tests[this.testIndex].content.length,
         });
         this.testIndex++
         this.tests = this.tests.concat(getRandomTestFunctions(this.language, 1));
         this.position = 0;
+        this.letter_count = 0;
+        this.word_count = 0;
+        this.error_pos = new Set();
+        this.testTimeElapsed = 0;
         this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
             character,
             state: CharacterState.REMAINING,
@@ -153,7 +185,7 @@ export class Game {
     getSequence() { return this.sequence }
 
     end() {
-        this.timeElapsed = new Date().getTime() - this.start_time!;
+        this.totalTimeElapsed = new Date().getTime() - this.start_time!;
         this.state = 'ended';
     }
 

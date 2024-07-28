@@ -58,19 +58,21 @@
             timerRunning = true;
             timer = setInterval(() => {
                 // TODO: Fix this randomness with the countdown timer for infinity
+                $game.testTimeElapsed++;
+                $game.totalTimeElapsed++;
                 if ($game.duration < 150) {
-                }
-                $game.timeElapsed++;
-                if ($game.timeElapsed >= $game.duration) {
+                    if ($game.totalTimeElapsed >= $game.duration) {
                     clearInterval(timer);
-                    if ($game.timeElapsed < 900) {
+                    if ($game.totalTimeElapsed < 900) {
                         endGame();
                     }
                 }
+                }
+
             }, 1000);
         }
         e.preventDefault();
-        if (e.key.toLowerCase() === "backspace") {
+        if (e.key.toLowerCase() === "backspace") { 
             console.log("processing backspace");
             if ($game.position > 0) {
                 $game.position--;
