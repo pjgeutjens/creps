@@ -24,7 +24,7 @@
         z-index: 100;
     }
     #language-select {
-        color: var(--text-color);
+        color: var(--text-color-bright);
     }
     .select-button {
         background-color: var(--main-color);

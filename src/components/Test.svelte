@@ -273,13 +273,13 @@
             color: var(--text-color);
         }
         &.incorrect {
-            color: var(--red);
+            color: var(--error);
         }
         &.remaining {
             color: var(--text-color-subdued);
         }
         &.skipped {
-            border-bottom: 1px solid var(--red);
+            border-bottom: 1px solid var(--error);
         }
     }
 </style>
