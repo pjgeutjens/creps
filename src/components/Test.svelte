@@ -243,6 +243,7 @@
     .word-list {
         /* display: flex */
         gap: 10px;
+        width: 40%;
         margin-bottom: 20px;
     }
     .word {
