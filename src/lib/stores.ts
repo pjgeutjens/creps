@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { Game, type Part } from './game';
 import { persisted } from 'svelte-persisted-store';
 
@@ -10,7 +10,6 @@ export type GameSettings = {
   theme?: string
 };
 
-export const game = writable(new Game("python"));
 
 export const gameSettings = persisted('settings', { 
   ignoreSemicolon: false, 
@@ -18,6 +17,9 @@ export const gameSettings = persisted('settings', {
   duration: 30, 
   theme: 'nord'
 });
+
+export const game = writable(new Game("python", get(gameSettings).ignoreSemicolon, get(gameSettings).duration));
+
 
 
 export function get_current(gameState: Game): Part {

@@ -7,7 +7,6 @@
     import { goto } from "$app/navigation";
     import type { Game } from "$lib/game";
     
-
     export let data: LayoutData;
 
     let loading: boolean = true;

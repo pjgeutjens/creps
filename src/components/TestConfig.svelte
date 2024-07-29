@@ -105,19 +105,19 @@
     <div class="divider"></div>
     <div class="duration-buttons">
         <button
-            on:click={() => ($game.duration = 30)}
+            on:click={() => {$game.duration = 30; $gameSettings.duration = 30}}
             class:selected={$game.duration === 30}>30</button
         >
         <button
-            on:click={() => ($game.duration = 60)}
+            on:click={() => {$game.duration = 60; $gameSettings.duration = 60}}
             class:selected={$game.duration === 60}>60</button
         >
         <button
-            on:click={() => ($game.duration = 120)}
+            on:click={() => {$game.duration = 120; $gameSettings.duration = 120}}
             class:selected={$game.duration === 120}>120</button
         >
         <button
-            on:click={() => ($game.duration = 0)}
+            on:click={() => {$game.duration = 0; $gameSettings.duration = 0}}
             class:selected={$game.duration === 0} class="infinity">∞</button
         >
         <button on:click={() => setRandomTheme()}>{$gameSettings.theme}</button>

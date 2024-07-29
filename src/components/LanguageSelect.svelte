@@ -15,7 +15,7 @@
         /* display: none; */
         position: absolute;
         top: 50%;
-        left: 50%;
+        left: 65%;
         width: 200px;
         height: 220px;
         background-color: var(--backround-color);
