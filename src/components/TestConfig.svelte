@@ -120,6 +120,6 @@
             on:click={() => {$game.duration = 0; $gameSettings.duration = 0}}
             class:selected={$game.duration === 0} class="infinity">∞</button
         >
-        <button on:click={() => setRandomTheme()}>{$gameSettings.theme}</button>
+        <!-- <button on:click={() => setRandomTheme()}>{$gameSettings.theme}</button> -->
     </div>
 </div>

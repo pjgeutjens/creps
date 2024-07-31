@@ -11,6 +11,7 @@
     import MonkeyLight from "../components/themes/monkey_light.svelte";
 
     import { gameSettings } from "$lib/stores";
+    import ThemeSelect from "../components/ThemeSelect.svelte";
 
 </script>
 
@@ -33,4 +34,5 @@
 <TestHistory />
 <TestFuture />
 <TestStats />
+<ThemeSelect />
 <Test />

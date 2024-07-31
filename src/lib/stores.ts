@@ -18,7 +18,7 @@ export const gameSettings = persisted('settings', {
   theme: 'nord'
 });
 
-export const game = writable(new Game("python", get(gameSettings).ignoreSemicolon, get(gameSettings).duration));
+export const game = writable(new Game("javascript", get(gameSettings).ignoreSemicolon, get(gameSettings).duration));
 
 
 

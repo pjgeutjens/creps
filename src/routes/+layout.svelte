@@ -6,6 +6,7 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import type { Game } from "$lib/game";
+    import ThemeSelect from "../components/ThemeSelect.svelte";
     
     export let data: LayoutData;
 
@@ -45,7 +46,9 @@
             <slot></slot>
             <!-- Main content will be injected here -->
         </main>
-        <footer></footer>
+        <footer>
+
+        </footer>
     </div>
 {/if}
 
