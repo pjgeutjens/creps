@@ -2,7 +2,6 @@
     import { alphabet } from "$lib/alphabet";
     import { CharacterState, Game } from "$lib/game";
     import { game, get_at, get_current, get_next } from "$lib/stores";
-    import { type TestFunction } from "$lib/tests";
     import { letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
     import LanguageSelect from "./LanguageSelect.svelte";
@@ -13,8 +12,6 @@
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
-
-    let tests: TestFunction[];
 
     let unsubscribe = game.subscribe((currentValue) => {
         if (currentValue.language === $game.language) {
@@ -51,7 +48,7 @@
             startGame($game.language);
             return;
         }
-        let current, next;
+        let current, next, prev;
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
@@ -75,8 +72,9 @@
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
-            let current = get_current($game);
-            let next = get_next($game);
+            current = get_current($game);
+            next = get_next($game);
+            prev = get_at($game, $game.position - 1);
             console.log(current, next);
             if (!next || !current) {
                 $game.position++;
@@ -101,6 +99,7 @@
                 }
                 current = get_current($game);
                 next = get_next($game);
+                prev = get_at($game, $game.position - 1);
             }
 
             while (
@@ -113,11 +112,13 @@
                 $game.position++;
                 current = get_current($game);
                 next = get_next($game);
+                prev = get_at($game, $game.position - 1);
             }
         } else if (alphabet.has(e.key)) {
             $game.letter_count++;
             current = get_current($game);
             next = get_next($game);
+            prev = get_at($game, $game.position - 1);
             console.log(current, next);
             if (current.character === e.key) {
                 current.state = CharacterState.CORRECT;
@@ -125,7 +126,7 @@
                     $game.word_count++;
                 }
                 $game.position++;
-            } else if (e.key === " " && current.character !== " ") {
+            } else if (e.key === " " && current.character !== " " && prev != null && prev.character !== " ") {
                 // TODO: refactor this to make it more readable
                 while (![" ", "_", "("].includes(current.character)) {
                     current.state = CharacterState.SKIPPED;
@@ -143,15 +144,15 @@
             } else if (e.key === " ") {
                 if (
                     $game.position > 0 &&
-                    get_at($game, $game.position - 1).character === " "
+                    get_at($game, $game.position - 1)!.character === " "
                 ) {
                     let position = $game.position;
                     while (
                         position < $game.sequence.length &&
-                        get_at($game, position).character === " "
+                        get_at($game, position)!.character === " "
                     ) {
                         $game.error_pos.add(position);
-                        get_at($game, position).state = CharacterState.SKIPPED;
+                        get_at($game, position)!.state = CharacterState.SKIPPED;
                         $game.was_skipped = true;
                         position++;
                     }

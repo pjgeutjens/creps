@@ -30,7 +30,10 @@ export function get_next(gameState: Game): Part {
   return gameState.sequence[gameState.position + 1];
 }
 
-export function get_at(gameState: Game, position: number): Part {
+export function get_at(gameState: Game, position: number): Part | null{
+  if (position >= gameState.sequence.length || position <= 0) {
+    return null;
+  }
   return gameState.sequence[position];
 }
 
