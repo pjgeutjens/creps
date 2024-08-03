@@ -16,6 +16,8 @@ export type Part = {
 
 const char_enter = `
 `
+let tabDepth = 0;
+let tabNumberOfSpaces = 4;
 
 
 export type GameState = {
@@ -137,15 +139,18 @@ export class Game {
         if (this.gameMode === 'zen' && e.key === "Enter") {
             prev = this.get_at(this.position - 1);
             this.sequence.push({
-                character: "\n",
+                character: char_enter,
                 state: CharacterState.CORRECT,
             });
             this.position++;
             if (prev.character === "{" || prev.character === "(") {
-                this.sequence.push({
-                    character: "\t",
-                    state: CharacterState.CORRECT,
-                });
+                tabDepth++;
+                for (let i = 0; i < tabDepth * tabNumberOfSpaces; i++) {
+                    this.sequence.push({
+                        character: " ",
+                        state: CharacterState.CORRECT,
+                    });
+                }
             }
             return
         }
