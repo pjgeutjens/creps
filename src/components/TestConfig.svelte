@@ -65,6 +65,11 @@
         font-size: 18px;
     }
 
+    #mode-button {
+        color: var(--text-color-bright);
+        cursor: none;
+    }
+
     .divider {
         background-color: var(--text-color-subdued); /* Grey line */
     }
@@ -84,19 +89,26 @@
 
 <div class="test-config">
     <div class="settings-buttons">
-        <button
-            on:click={() => {$game.gameMode  = 'zen'; $game.reset(); $game.randy = Math.random()}}
-            class:selected={$game.gameMode === 'zen'}><i class="fa-solid fa-yin-yang"></i></button
-        >
+        <button id="mode-button">mode</button>
         <button
             on:click={() => {$game.gameMode  = 'functions'; $game.reset(); $game.randy = Math.random()}
             }
-            class:selected={$game.gameMode === 'functions'}><i class="fa-solid fa-code"></i></button
-        >
+            class:selected={$game.gameMode === 'functions'}>
+                <!-- <i class="fa-solid fa-code"></i> -->
+                functions
+        </button>
         <button
             on:click={() => {$game.gameMode  = 'patterns'; $game.reset(); $game.randy = Math.random()}}
-            class:selected={$game.gameMode === 'patterns'}>{"{ }"}</button
-        >
+            class:selected={$game.gameMode === 'patterns'}>
+                patterns
+                <!-- {"{ }"} -->
+        </button>
+        <button
+        on:click={() => {$game.gameMode  = 'zen'; $game.reset(); $game.randy = Math.random()}}
+        class:selected={$game.gameMode === 'zen'}>
+            <!-- <i class="fa-solid fa-yin-yang"></i> -->
+            zen
+    </button>
     </div>
     <div class="divider"></div>
     <div class="duration-buttons">
