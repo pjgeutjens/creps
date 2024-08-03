@@ -42,7 +42,24 @@
         $game.end()
     }
 
+    function checkTimer() {
+        if (!timerRunning) {
+            timerRunning = true;
+            timer = setInterval(() => {
+                // TODO: Fix this randomness with the countdown timer for infinity
+                $game.testTimeElapsed++;
+                $game.totalTimeElapsed++;
+                if ($game.duration > 0) {
+                    if ($game.totalTimeElapsed >= $game.duration) {
+                        clearInterval(timer);
+                        endGame();
+                    }
+                }
+            }, 1000);
+        }
+    }
     function onkeydown(e: KeyboardEvent) {
+        checkTimer();
         $game.handleKeydown(e);
         $game.language = $game.language;
     }

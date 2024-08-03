@@ -7,4 +7,4 @@
     }
 </style>
 
-<time>{$game && $game.duration > 0 ? ($game.duration - $game.totalTimeElapsed).toFixed(0) : "∞"}</time>
+<time>{$game && $game.duration > 0 ? ($game.duration - $game.totalTimeElapsed).toFixed(0) : ""}</time>

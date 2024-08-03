@@ -19,6 +19,11 @@
     });
 </script>
 
+{#if $game.isInfinite()}
+<div class="test-toggleStats">
+    press <span class="btn">ctrl</span>+<span class="btn">esc</span> to toggle stats
+</div>
+{:else}
 <div class="test-gameStats">
     <div class="gameStats-buttons">
         <button class="selected">wpm</button>
@@ -41,8 +46,30 @@
         <button>{$game.letter_count}</button>
     </div>
 </div>
+{/if}
+
 
 <style>
+    .btn {
+        color: #777;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 0 5px;
+        cursor: none;
+    }
+    .test-toggleStats {
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        height: 30px;
+        transform: translateX(-50%);
+        width: 60%;
+        text-align: center;
+        align-items: center;
+        color: var(--text-color-subdued);
+        background-color: var(--text-color-dark);
+        border-radius: 8px;
+    }
     .test-gameStats {
         position: absolute;
         bottom: 15%;
