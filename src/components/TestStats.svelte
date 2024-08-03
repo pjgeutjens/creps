@@ -51,11 +51,16 @@
 
 <style>
     .btn {
-        color: #777;
+        background-color: #777;
+        color: var(--text-color-dark);
         font-size: 16px;
         font-weight: bold;
         padding: 0 5px;
         cursor: none;
+        border: 1px solid #777;
+        border-radius: 5px;
+        padding: 1px 5px;
+        margin: 0 5px;
     }
     .test-toggleStats {
         position: absolute;
@@ -67,7 +72,7 @@
         text-align: center;
         align-items: center;
         color: var(--text-color-subdued);
-        background-color: var(--text-color-dark);
+        /* background-color: var(--text-color-dark); */
         border-radius: 8px;
     }
     .test-gameStats {
