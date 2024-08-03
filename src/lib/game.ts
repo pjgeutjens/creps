@@ -1,5 +1,5 @@
 import { alphabet } from "./alphabet";
-import { getRandomTestFunctions, type TestFunction } from "./tests";
+import { getTestFunctions, type TestFunction } from "./tests";
 
 export enum CharacterState {
     REMAINING = "remaining",
@@ -74,7 +74,7 @@ export class Game {
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
         this.gameMode = gameMode;
-        this.tests = this.gameMode === 'zen' ? [] : getRandomTestFunctions(language, 6);
+        this.tests = getTestFunctions(language, gameMode, 6);
         this.testIndex = 0;
         this.ignoreSemicolon = ignoreSemicolon;
         this.language = language;
@@ -82,14 +82,7 @@ export class Game {
         this.position = 0;
         this.randy = Math.random();
         this.sequence = []
-        if (gameMode === 'zen') {
-            this.sequence = [];
-        } else {
-            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-                character,
-                state: CharacterState.REMAINING,
-            }));
-        } 
+        this.setInitialSequence(this.gameMode);
         this.state = 'paused';
         this.history = [];
         this.error_pos = new Set();
@@ -105,6 +98,17 @@ export class Game {
         this.totalTimeElapsed = 0;
         this.accuracy = 0;
         this.wpm = 0;
+    }
+
+    setInitialSequence(mode: string) {
+        if (mode === 'zen') {
+            this.sequence = [];
+        } else {
+            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+                character,
+                state: CharacterState.REMAINING,
+            }));
+        }
     }
 
     toggleGameMode() {
@@ -320,7 +324,7 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = this.gameMode === 'zen' ? [] :  getRandomTestFunctions(this.language, 6);
+        this.tests = this.gameMode === 'zen' ? [] :  getTestFunctions(this.language, this.gameMode, 6);
         this.state = 'paused';
         this.testIndex = 0;
         if (this.gameMode === 'zen') {
@@ -387,7 +391,7 @@ export class Game {
             testLength: this.tests[this.testIndex].content.length,
         });
         this.testIndex++
-        this.tests = this.tests.concat(getRandomTestFunctions(this.language, 1));
+        this.tests = this.tests.concat(getTestFunctions(this.language, this.gameMode, 1));
         this.position = 0;
         this.letter_count = 0;
         this.word_count = 0;
