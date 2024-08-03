@@ -65,7 +65,7 @@
         font-size: 18px;
     }
 
-    #mode-button {
+    .option-button {
         color: var(--text-color-bright);
         cursor: none;
     }
@@ -89,7 +89,7 @@
 
 <div class="test-config">
     <div class="settings-buttons">
-        <button id="mode-button">mode</button>
+        <button class="option-button">mode</button>
         <button
             on:click={() => {$game.gameMode  = 'functions'; $game.reset(); $game.randy = Math.random()}
             }
@@ -112,6 +112,7 @@
     </div>
     <div class="divider"></div>
     <div class="duration-buttons">
+        <button class="option-button">time</button>
         <button
             on:click={() => {$game.duration = 30; $gameSettings.duration = 30}}
             class:selected={$game.duration === 30}>30</button

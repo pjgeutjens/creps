@@ -69,6 +69,7 @@ export class Game {
     totalTimeElapsed: number;
     accuracy: number;
     wpm: number;
+    randy: number
 
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
@@ -79,6 +80,7 @@ export class Game {
         this.language = language;
         this.duration = duration;
         this.position = 0;
+        this.randy = Math.random();
         this.sequence = []
         if (gameMode === 'zen') {
             this.sequence = [];
@@ -336,6 +338,7 @@ export class Game {
         this.word_count = 0;
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
+        this.duration = this.gameMode === 'zen' ? 0 : this.duration;
     }
 
     updateStats() {
