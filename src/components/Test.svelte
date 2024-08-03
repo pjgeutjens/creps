@@ -76,9 +76,10 @@
             {#each $game.sequence as letter, index}
                 <letter
                     class="{letter.state} {
-                        ($game.gameMode === 'zen' && index === $game.sequence.length - 1 ) || ($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position)
+                        ($game.gameMode === 'zen' && index === $game.sequence.length - 1 ) 
                         ? 'active-after'
-                        : ''}"
+                        : ''} {($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position) 
+                        ? 'active' : ''}"
                     >{@html letterToHtml(letter.character)}</letter
                 >
             {/each}

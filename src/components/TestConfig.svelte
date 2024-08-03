@@ -85,15 +85,16 @@
 <div class="test-config">
     <div class="settings-buttons">
         <button
-            on:click={() => ($game.gameMode  = 'zen')}
+            on:click={() => {$game.gameMode  = 'zen'; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.gameMode === 'zen'}><i class="fa-solid fa-yin-yang"></i></button
         >
         <button
-            on:click={() => ($game.gameMode  = 'functions')}
+            on:click={() => {$game.gameMode  = 'functions'; $game.reset(); $game.randy = Math.random()}
+            }
             class:selected={$game.gameMode === 'functions'}><i class="fa-solid fa-code"></i></button
         >
         <button
-            on:click={() => ($game.gameMode  = 'patterns')}
+            on:click={() => {$game.gameMode  = 'patterns'; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.gameMode === 'patterns'}>{"{ }"}</button
         >
     </div>
