@@ -47,6 +47,7 @@ export class Game {
     tests: TestFunction[];
     testIndex: number;
     state: 'setup' | 'active' | 'ended' | 'paused';
+    gameMode: 'functions' | 'zen';
     sequence: Part[];
     history: HistoryItem[];
     ignoreSemicolon: boolean;
@@ -64,8 +65,9 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'functions') {
         console.log("l", language)
+        this.gameMode = gameMode;
         this.tests = getRandomTestFunctions(language, 6);
         this.testIndex = 0;
         this.ignoreSemicolon = ignoreSemicolon;
@@ -92,6 +94,20 @@ export class Game {
         this.accuracy = 0;
         this.wpm = 0;
     }
+
+    toggleGameMode() {
+        switch (this.gameMode) {
+            case 'functions':
+                console.log("switching to zen")
+                this.gameMode = 'zen';
+                break;
+            case 'zen':
+                console.log("switching to functions")
+                this.gameMode = 'functions';
+                break;
+        }
+    }
+
 
     handleKeydown(e: KeyboardEvent) {
         console.log("in handle ", e.key)

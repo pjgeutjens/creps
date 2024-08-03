@@ -1,14 +1,6 @@
 <script>
     import { game, gameSettings } from "$lib/stores";
-    import { get } from 'svelte/store'
 
-    function setRandomTheme() {
-        const themes = ["nord", "nord_light", "monkey", "monkey_light"].filter((theme) => theme !== $gameSettings.theme);
-        const currentSettings = get(gameSettings)
-        const randomIndex = Math.floor(Math.random() * themes.length);
-        const newSettings = {...currentSettings, theme: themes[randomIndex]}
-        gameSettings.update(() => newSettings);
-    }
 
         
 </script>
@@ -36,6 +28,17 @@
         border-bottom-right-radius: 8px;
         overflow: hidden;
         border: 1 px solid var(--text-color-dark);
+    }
+    .settings-buttons {
+        display: relative;
+        top: 6px;
+        left: auto;
+        gap: 0px;
+        font-size: 14px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        overflow: hidden;
+        border: 1 px solid #333;
     }
     button {
         display: inline-flex;
@@ -80,28 +83,12 @@
 
 
 <div class="test-config">
-    <!-- <div class="language-buttons">
+    <div class="settings-buttons">
         <button
-            on:click={() => ($game.language = "javascript")}
-            class:selected={$game.language === "javascript"}>javascript</button
+            on:click={() => ($game.gameMode === 'functions' ? $game.gameMode = 'zen' : $game.gameMode = 'functions')}
+            class:selected={$game.gameMode === 'zen'}><i class="fa-solid fa-yin-yang"></i></button
         >
-        <button
-            on:click={() => ($game.language = "typescript")}
-            class:selected={$game.language === "typescript"}>typescript</button
-        >
-        <button
-            on:click={() => ($game.language = "python")}
-            class:selected={$game.language === "python"}>python</button
-        >
-        <button
-            on:click={() => ($game.language = "golang")}
-            class:selected={$game.language === "golang"}>golang</button
-        >
-        <button
-            on:click={() => ($game.language = "bash")}
-            class:selected={$game.language === "bash"}>bash</button
-        >
-    </div> -->
+    </div>
     <div class="divider"></div>
     <div class="duration-buttons">
         <button
