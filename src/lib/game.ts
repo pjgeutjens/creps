@@ -47,7 +47,7 @@ export class Game {
     tests: TestFunction[];
     testIndex: number;
     state: 'setup' | 'active' | 'ended' | 'paused';
-    gameMode: 'functions' | 'zen';
+    gameMode: 'functions' | 'patterns' | 'zen';
     sequence: Part[];
     history: HistoryItem[];
     ignoreSemicolon: boolean;

@@ -85,8 +85,16 @@
 <div class="test-config">
     <div class="settings-buttons">
         <button
-            on:click={() => ($game.gameMode === 'functions' ? $game.gameMode = 'zen' : $game.gameMode = 'functions')}
+            on:click={() => ($game.gameMode  = 'zen')}
             class:selected={$game.gameMode === 'zen'}><i class="fa-solid fa-yin-yang"></i></button
+        >
+        <button
+            on:click={() => ($game.gameMode  = 'functions')}
+            class:selected={$game.gameMode === 'functions'}><i class="fa-solid fa-code"></i></button
+        >
+        <button
+            on:click={() => ($game.gameMode  = 'patterns')}
+            class:selected={$game.gameMode === 'patterns'}>{"{ }"}</button
         >
     </div>
     <div class="divider"></div>
