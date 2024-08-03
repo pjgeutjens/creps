@@ -9,15 +9,12 @@
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
     import { get } from "svelte/store";
-    import { sequence } from "@sveltejs/kit/hooks";
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
-    let forceRerender = 0
 
     let unsubscribe = game.subscribe((currentValue) => {
-        if (currentValue.language === $game.language) {
-            console.log("Game not changed", currentValue);
+        if (currentValue.language === $game.language && currentValue.gameMode === $game.gameMode) {
             return;
         }
         console.log("Game changed", currentValue);
@@ -78,9 +75,11 @@
         {#if $game.state === "active"}
             {#each $game.sequence as letter, index}
                 <letter
-                    class="{letter.state} {index === $game.position
-                        ? 'active'
-                        : ''}">{@html letterToHtml(letter.character)}</letter
+                    class="{letter.state} {
+                        ($game.gameMode === 'zen' && index === $game.sequence.length - 1 ) || ($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position)
+                        ? 'active-after'
+                        : ''}"
+                    >{@html letterToHtml(letter.character)}</letter
                 >
             {/each}
         {/if}
@@ -142,6 +141,14 @@
             font-size: 1em;
             position: absolute;
             left: -50%;
+            animation: 1s blink infinite ease-in-out;
+        }
+        &.active-after::after {
+            content: "|";
+            color: var(--main-color);
+            font-size: 1em;
+            position: absolute;
+            right: -50%;
             animation: 1s blink infinite ease-in-out;
         }
         &.is-last::before {

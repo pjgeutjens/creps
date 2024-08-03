@@ -14,6 +14,9 @@ export type Part = {
     state: CharacterState;
 };
 
+const char_enter = `
+`
+
 
 export type GameState = {
     position: number;
@@ -65,19 +68,24 @@ export class Game {
     accuracy: number;
     wpm: number;
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'functions') {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
         this.gameMode = gameMode;
-        this.tests = getRandomTestFunctions(language, 6);
+        this.tests = this.gameMode === 'zen' ? [] : getRandomTestFunctions(language, 6);
         this.testIndex = 0;
         this.ignoreSemicolon = ignoreSemicolon;
         this.language = language;
         this.duration = duration;
         this.position = 0;
-        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-            character,
-            state: CharacterState.REMAINING,
-        }));
+        this.sequence = []
+        if (gameMode === 'zen') {
+            this.sequence = [];
+        } else {
+            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+                character,
+                state: CharacterState.REMAINING,
+            }));
+        } 
         this.state = 'paused';
         this.history = [];
         this.error_pos = new Set();
@@ -110,19 +118,65 @@ export class Game {
 
 
     handleKeydown(e: KeyboardEvent) {
-        console.log("in handle ", e.key)
         if (this.state === "ended" || this.state === "paused") {
             this.start()
             return;
         }
         let current, next, prev;
+
+        if (e.key === "Shift") {
+            return
+        }
         
+        if (this.gameMode === 'zen' && e.key === "Delete") {
+            this.sequence = this.sequence.slice(0, this.position).concat(this.sequence.slice(this.position + 1));
+            this.position--;
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "Enter") {
+            prev = this.get_at(this.position - 1);
+            this.sequence.push({
+                character: "\n",
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
+            if (prev.character === "{" || prev.character === "(") {
+                this.sequence.push({
+                    character: "\t",
+                    state: CharacterState.CORRECT,
+                });
+            }
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key !== "Backspace") {
+            this.sequence.push({
+                character: e.key,
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "Backspace") {
+            if (this.sequence.length === 0) {
+                return
+            }
+            this.sequence.pop();
+            this.position--;
+            return
+        }
         e.preventDefault();
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if (this.position > 0) {
                 this.position--;
+                if (this.gameMode === 'zen') {
+                    this.sequence = this.sequence.slice(0, this.position);
+                } else {
                 this.sequence[this.position].state = CharacterState.REMAINING;
+                }
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
@@ -259,13 +313,17 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = getRandomTestFunctions(this.language, 6);
+        this.tests = this.gameMode === 'zen' ? [] :  getRandomTestFunctions(this.language, 6);
         this.state = 'paused';
         this.testIndex = 0;
-        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-            character,
-            state: CharacterState.REMAINING,
-        }));
+        if (this.gameMode === 'zen') {
+            this.sequence = [];
+        } else {
+            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+                character,
+                state: CharacterState.REMAINING,
+            }));
+        }
         this.position = 0;
         this.history = [];
         this.error_pos = new Set();
