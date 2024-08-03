@@ -1,3 +1,4 @@
+import { alphabet } from "./alphabet";
 import { getRandomTestFunctions, type TestFunction } from "./tests";
 
 export enum CharacterState {
@@ -92,9 +93,152 @@ export class Game {
         this.wpm = 0;
     }
 
+    handleKeydown(e: KeyboardEvent) {
+        console.log("in handle ", e.key)
+        if (this.state === "ended" || this.state === "paused") {
+            this.start()
+            return;
+        }
+        let current, next, prev;
+        
+        e.preventDefault();
+        if (e.key.toLowerCase() === "backspace") {
+            console.log("processing backspace");
+            if (this.position > 0) {
+                this.position--;
+                this.sequence[this.position].state = CharacterState.REMAINING;
+            }
+        } else if (e.key.toLowerCase() === "enter") {
+            console.log("processing enter");
+            current = this.get_current();
+            next = this.get_next();
+            prev = this.get_at(this.position - 1);
+            console.log(prev, current, next);
+            if (!next || !current) {
+                this.position++;
+                if (this.position >= this.sequence.length) {
+                    this.word_count++;
+                    this.end();
+                }
+            }
+            if (current.character === ";") {
+                switch (this.ignoreSemicolon) {
+                    case true:
+                        console.log("IGNORING SEMICOLON");
+                        current.state = CharacterState.SEMI;
+                        this.position++;
+                        break;
+                    case false:
+                        console.log("ERROR SEMICOLON");
+                        current.state = CharacterState.INCORRECT;
+                        this.error_pos.add(this.position);
+                        this.position++;
+                        break;
+                }
+                current = this.get_current();
+                next = this.get_next();
+                prev = this.get_at(this.position - 1);
+            }
+
+            while (
+                (current && current.character.charCodeAt(0) === 10) ||
+                current.character.charCodeAt(0) === 32 ||
+                current.character === " "
+            ) {
+                // console.log("SKIP", current.character.charCodeAt(0))
+                current.state = CharacterState.CORRECT;
+                this.position++;
+                current = this.get_current();
+                next = this.get_next();
+                prev = this.get_at(this.position - 1);
+            }
+        } else if (alphabet.has(e.key)) {
+            this.letter_count++;
+            current = this.get_current();
+            next = this.get_next();
+            prev = this.get_at(this.position - 1);
+            console.log("cnp", current, next, prev);
+            if (current.character === e.key) {
+                current.state = CharacterState.CORRECT;
+                if (e.key === " " || e.key === ";") {
+                    this.word_count++;
+                }
+                this.position++;
+            } else if (e.key === " " && current.character !== " " && prev != null && prev.character !== " ") {
+                // TODO: refactor this to make it more readable 
+                while (![" ", "_", "("].includes(current.character)) {
+                    current.state = CharacterState.SKIPPED;
+                    this.error_pos.add(this.position);
+                    this.was_skipped = true;
+                    this.position++;
+                    current = this.get_current();
+                    next = this.get_next();
+                    prev = this.get_at(this.position - 1);
+                }
+                if (current.character === " ") {
+                    this.position++;
+                    current = this.get_current();
+                    next = this.get_next();
+                    prev = this.get_at(this.position - 1);
+                }
+            } else if (e.key === " ") {
+                if (
+                    this.position > 0 &&
+                    (prev?.character === " " || prev === null)
+                ) {
+                    let position = this.position;
+                    while (
+                        position < this.sequence.length &&
+                        this.get_at(position)!.character === " "
+                    ) {
+                        this.error_pos.add(position);
+                        this.get_at(position)!.state = CharacterState.SKIPPED;
+                        this.was_skipped = true;
+                        position++;
+                    }
+                    this.position = position;
+                    // this.position++;
+                }
+            } else {
+                current.state = CharacterState.INCORRECT;
+                this.error_pos.add(this.position);
+                this.position++;
+            }
+        }
+        if (this.position > 0 && this.start_time === null) {
+            this.start_time = performance.now();
+        }
+        if (this.position >= this.sequence.length) {
+            if (!this.was_skipped) {
+                // for the last word we don't type space so
+                // we count it at the end unless it's skipped
+                this.word_count++;
+            }
+            this.nextTest();
+        }
+
+        // let newgameStats = {
+        //     wordCount: this.word_count,
+        //     charCount: this.letter_count,
+        //     wordsPerMinute: ((this.letter_count / game.timeElapsed) * 60) / 5,
+        //     accuracy:
+        //         game.letter_count > 0
+        //             ? ((game.letter_count - game.error_pos.size) /
+        //                   game.letter_count) *
+        //               100
+        //             : 0,
+        //     active: thisStats.active,
+        //     ended: thisStats.ended,
+        // };
+        // updateStats(newgameStats);
+        this.updateStats();
+        return this;
+    }
+
     start() {
         this.state = 'active';
         this.start_time = new Date().getTime();
+        this.reset();
     }
 
     reset() {
@@ -122,11 +266,10 @@ export class Game {
     }
 
     calculateAccuracy() {
-        return this.letter_count > 0 ? ((this.letter_count - this.error_pos.size) /  this.letter_count) * 100 : 0;
+        return this.letter_count > 0 ? ((this.letter_count - this.error_pos.size) / this.letter_count) * 100 : 0;
     }
 
     calculateWPM() {
-        console.log(this.letter_count, " / ", this.testTimeElapsed)
         return (this.letter_count / this.testTimeElapsed) * 60 / 5;
     }
 
@@ -148,7 +291,6 @@ export class Game {
         const weighedWPM = this.history.reduce((acc, item) => acc + item.wpm * item.testLength, 0);
         return weighedWPM / totalLength;
     }
-
 
     nextTest() {
         this.history.push({
