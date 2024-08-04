@@ -1,23 +1,17 @@
 <script lang="ts">
-    import { alphabet } from "$lib/alphabet";
-    import { CharacterState, Game } from "$lib/game";
-    import { game, get_at, get_current, get_next } from "$lib/stores";
-    import { letterToHtml } from "$lib/utils";
+    import { game } from "$lib/stores";
+    import { isLast, letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
+    
     import LanguageSelect from "./LanguageSelect.svelte";
-
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
-    import { get } from "svelte/store";
-    import { sequence } from "@sveltejs/kit/hooks";
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
-    let forceRerender = 0
 
     let unsubscribe = game.subscribe((currentValue) => {
-        if (currentValue.language === $game.language) {
-            console.log("Game not changed", currentValue);
+        if (currentValue.language === $game.language && currentValue.gameMode === $game.gameMode) {
             return;
         }
         console.log("Game changed", currentValue);
@@ -46,11 +40,11 @@
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
-                // TODO: Fix this randomness with the countdown timer for infinity
                 $game.testTimeElapsed++;
                 $game.totalTimeElapsed++;
-                if ($game.duration > 0) {
+                if (!$game.isInfinite()) {
                     if ($game.totalTimeElapsed >= $game.duration) {
+                        console.log("Game over");
                         clearInterval(timer);
                         endGame();
                     }
@@ -60,6 +54,7 @@
     }
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
+        console.log(e.code, e.ctrlKey)
         $game.handleKeydown(e);
         $game.language = $game.language;
     }
@@ -78,20 +73,19 @@
         {#if $game.state === "active"}
             {#each $game.sequence as letter, index}
                 <letter
-                    class="{letter.state} {index === $game.position
-                        ? 'active'
-                        : ''}">{@html letterToHtml(letter.character)}</letter
+                    class="{letter.state} {
+                        ($game.gameMode === 'zen' && index === $game.sequence.length - 1 ) 
+                        ? 'active-after'
+                        : ''} {($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position) 
+                        ? 'active' : ''}"
+                    >{@html letterToHtml(letter.character, isLast(index, $game.sequence))}</letter
                 >
             {/each}
         {/if}
     </div>
-    <!-- <div>
-        {$game.letter_count} 
-        {#each $game.sequence as letter, index}
-            {letter.state[0]}
-            
-        {/each}
-    </div> -->
+    <div>
+        { $game.tabDepth} { $game.position} { $game.sequence.length}
+    </div>
 </div>
 
 <style>
@@ -142,6 +136,14 @@
             font-size: 1em;
             position: absolute;
             left: -50%;
+            animation: 1s blink infinite ease-in-out;
+        }
+        &.active-after::after {
+            content: "|";
+            color: var(--main-color);
+            font-size: 1em;
+            position: absolute;
+            right: -50%;
             animation: 1s blink infinite ease-in-out;
         }
         &.is-last::before {

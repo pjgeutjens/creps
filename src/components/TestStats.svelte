@@ -21,7 +21,7 @@
 
 {#if $game.isInfinite()}
 <div class="test-toggleStats">
-    press <span class="btn">ctrl</span>+<span class="btn">esc</span> to toggle stats
+    press <span class="btn">ctrl</span>+<span class="btn">esc</span> to toggle stats overlay
 </div>
 {:else}
 <div class="test-gameStats">

@@ -1,5 +1,5 @@
 import { alphabet } from "./alphabet";
-import { getRandomTestFunctions, type TestFunction } from "./tests";
+import { getTestFunctions, type TestFunction } from "./tests";
 
 export enum CharacterState {
     REMAINING = "remaining",
@@ -13,6 +13,10 @@ export type Part = {
     character: string;
     state: CharacterState;
 };
+
+const char_enter = `
+`
+let tabNumberOfSpaces = 4;
 
 
 export type GameState = {
@@ -47,6 +51,7 @@ export class Game {
     tests: TestFunction[];
     testIndex: number;
     state: 'setup' | 'active' | 'ended' | 'paused';
+    gameMode: 'functions' | 'patterns' | 'zen';
     sequence: Part[];
     history: HistoryItem[];
     ignoreSemicolon: boolean;
@@ -63,19 +68,22 @@ export class Game {
     totalTimeElapsed: number;
     accuracy: number;
     wpm: number;
+    randy: number
+    tabDepth: number
+    tabNumberOfSpaces: number = 2
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30) {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
-        this.tests = getRandomTestFunctions(language, 6);
+        this.gameMode = gameMode;
+        this.tests = getTestFunctions(language, gameMode, 6);
         this.testIndex = 0;
         this.ignoreSemicolon = ignoreSemicolon;
         this.language = language;
         this.duration = duration;
         this.position = 0;
-        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-            character,
-            state: CharacterState.REMAINING,
-        }));
+        this.randy = Math.random();
+        this.sequence = []
+        this.setInitialSequence(this.gameMode);
         this.state = 'paused';
         this.history = [];
         this.error_pos = new Set();
@@ -84,6 +92,7 @@ export class Game {
         this.start_time = new Date().getTime();
         this.end_time = null;
         this.was_skipped = false;
+        this.tabDepth = 0;
 
 
         this.first = true;
@@ -93,20 +102,120 @@ export class Game {
         this.wpm = 0;
     }
 
+    setInitialSequence(mode: string) {
+        if (mode === 'zen') {
+            this.sequence = [];
+        } else {
+            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+                character,
+                state: CharacterState.REMAINING,
+            }));
+        }
+    }
+
+    toggleGameMode() {
+        switch (this.gameMode) {
+            case 'functions':
+                console.log("switching to zen")
+                this.gameMode = 'zen';
+                break;
+            case 'zen':
+                console.log("switching to functions")
+                this.gameMode = 'functions';
+                break;
+        }
+    }
+
+
     handleKeydown(e: KeyboardEvent) {
-        console.log("in handle ", e.key)
+        e.preventDefault(); { { } }
         if (this.state === "ended" || this.state === "paused") {
             this.start()
             return;
         }
         let current, next, prev;
-        
-        e.preventDefault();
+
+        if (e.key === "Shift" || e.key === "CapsLock" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") {
+            return
+        }
+
+        if (e.key === "Tab") {
+            this.sequence.push({
+                character: " ".repeat(this.tabNumberOfSpaces),
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "Delete") {
+            this.sequence = this.sequence.slice(0, this.position).concat(this.sequence.slice(this.position + 1));
+            this.position--;
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "Enter") {
+            prev = this.get_at(this.position - 1);
+            this.sequence.push({
+                character: '\n',
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
+            // TODO something still not right in python with the tabbing for colon
+            if (prev.character === "{" || prev.character === "(" || prev.character === ":") {
+                this.tabDepth++;
+            }
+            for (let i = 0; i < this.tabDepth; i++) {
+                this.sequence.push({
+                    character: " ".repeat(this.tabNumberOfSpaces),
+                    state: CharacterState.CORRECT,
+                });
+                this.position++;
+            }
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "}") {
+                this.sequence.pop();
+                this.position--;
+            if (this.tabDepth > 0) {
+                this.tabDepth--;
+            }
+        }
+
+        if (this.gameMode === 'zen' && e.key !== "Backspace") {
+            this.sequence.push({
+                character: e.key,
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
+            return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "Backspace") {
+            if (this.sequence.length === 0) {
+                return
+            }
+            let char = this.sequence.pop();
+            if ((char?.character === "{" || char?.character === ":") && this.tabDepth > 0) {
+                this.tabDepth--;
+            }
+            this.position--;
+            while (this.position > 0 && !alphabet.has(this.sequence[this.position - 1]?.character)) {
+                this.sequence.pop();
+                this.position--;
+            }
+            return
+        }
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if (this.position > 0) {
                 this.position--;
-                this.sequence[this.position].state = CharacterState.REMAINING;
+                if (this.gameMode === 'zen') {
+                    this.sequence = this.sequence.slice(0, this.position);
+                } else {
+                    this.sequence[this.position].state = CharacterState.REMAINING;
+                }
             }
         } else if (e.key.toLowerCase() === "enter") {
             console.log("processing enter");
@@ -243,13 +352,17 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = getRandomTestFunctions(this.language, 6);
+        this.tests = this.gameMode === 'zen' ? [] : getTestFunctions(this.language, this.gameMode, 6);
         this.state = 'paused';
         this.testIndex = 0;
-        this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-            character,
-            state: CharacterState.REMAINING,
-        }));
+        if (this.gameMode === 'zen') {
+            this.sequence = [];
+        } else {
+            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
+                character,
+                state: CharacterState.REMAINING,
+            }));
+        }
         this.position = 0;
         this.history = [];
         this.error_pos = new Set();
@@ -257,6 +370,7 @@ export class Game {
         this.word_count = 0;
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
+        this.duration = this.gameMode === 'zen' ? 0 : this.duration;
     }
 
     updateStats() {
@@ -305,7 +419,7 @@ export class Game {
             testLength: this.tests[this.testIndex].content.length,
         });
         this.testIndex++
-        this.tests = this.tests.concat(getRandomTestFunctions(this.language, 1));
+        this.tests = this.tests.concat(getTestFunctions(this.language, this.gameMode, 1));
         this.position = 0;
         this.letter_count = 0;
         this.word_count = 0;
