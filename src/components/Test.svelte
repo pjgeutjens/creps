@@ -6,6 +6,7 @@
     import LanguageSelect from "./LanguageSelect.svelte";
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
+    import StatsOverlay from "./StatsOverlay.svelte";
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
@@ -54,14 +55,23 @@
     }
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
-        console.log(e.code, e.ctrlKey)
+        if (e.ctrlKey && e.key === "Escape") {
+            $game.showStatsOverlay = true
+        }
         $game.handleKeydown(e);
         $game.language = $game.language;
+    }
+
+    function showStatsOverlay() {
+        $game.showStatsOverlay = false;
     }
 </script>
 
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
+    {#if $game.showStatsOverlay}
+        <StatsOverlay onClick={showStatsOverlay} />
+    {/if}
     <StartGameOverlay
         onClick={() => startGame()}
     />
@@ -83,9 +93,9 @@
             {/each}
         {/if}
     </div>
-    <div>
+    <!-- <div>
         { $game.tabDepth} { $game.position} { $game.sequence.length}
-    </div>
+    </div> -->
 </div>
 
 <style>

@@ -71,6 +71,7 @@ export class Game {
     randy: number
     tabDepth: number
     tabNumberOfSpaces: number = 2
+    showStatsOverlay: boolean = false
 
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
@@ -135,7 +136,12 @@ export class Game {
         }
         let current, next, prev;
 
-        if (e.key === "Shift" || e.key === "CapsLock" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") {
+        if (e.key === "Shift" || 
+            e.key === "CapsLock" || 
+            e.key === "Control" || 
+            e.key === "Alt" || 
+            e.key === "Meta" || 
+            e.key === "Escape" ) {
             return
         }
 

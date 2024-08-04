@@ -1,0 +1,31 @@
+<script>
+    import { game } from "$lib/stores";
+
+    export let onClick;
+</script>
+
+<style>
+    .overlay {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.60); /* Slightly lighter black overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color); /* Text color variable */
+        font-size: 1em;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+    }
+    svg {
+        margin-right: 1em;
+    }
+    </style>
+
+{#if ($game.showStatsOverlay)}
+<button class="overlay" on:click={onClick}>
+    STATS
+</button>
+{/if}
