@@ -1,5 +1,5 @@
 <script>
-    import { gameSettings, game } from "$lib/stores";
+    import { game } from "$lib/stores";
 </script>
 <style>
         time {
@@ -7,4 +7,10 @@
     }
 </style>
 
-<time>{$game && $game.duration > 0 ? ($game.duration - $game.totalTimeElapsed).toFixed(0) : ""}</time>
+<time>
+    {#if $game.isInfinite()}
+        {$game.totalTimeElapsed}
+    {:else}
+        {($game.duration - $game.totalTimeElapsed).toFixed(0)}
+    {/if}
+</time>

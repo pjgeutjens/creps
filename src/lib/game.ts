@@ -16,7 +16,6 @@ export type Part = {
 
 const char_enter = `
 `
-let tabDepth = 0;
 let tabNumberOfSpaces = 4;
 
 
@@ -70,6 +69,8 @@ export class Game {
     accuracy: number;
     wpm: number;
     randy: number
+    tabDepth: number
+    tabNumberOfSpaces: number = 2
 
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
@@ -91,6 +92,7 @@ export class Game {
         this.start_time = new Date().getTime();
         this.end_time = null;
         this.was_skipped = false;
+        this.tabDepth = 0;
 
 
         this.first = true;
@@ -126,13 +128,23 @@ export class Game {
 
 
     handleKeydown(e: KeyboardEvent) {
+        e.preventDefault();{{}}
         if (this.state === "ended" || this.state === "paused") {
             this.start()
             return;
         }
         let current, next, prev;
 
-        if (e.key === "Shift") {
+        if (e.key === "Shift" || e.key === "CapsLock" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") {
+            return
+        }
+
+        if (e.key === "Tab") {
+            this.sequence.push({
+                character: " ".repeat(this.tabNumberOfSpaces),
+                state: CharacterState.CORRECT,
+            });
+            this.position++;
             return
         }
         
@@ -149,16 +161,25 @@ export class Game {
                 state: CharacterState.CORRECT,
             });
             this.position++;
-            if (prev.character === "{" || prev.character === "(") {
-                tabDepth++;
-                for (let i = 0; i < tabDepth * tabNumberOfSpaces; i++) {
-                    this.sequence.push({
-                        character: " ",
-                        state: CharacterState.CORRECT,
-                    });
-                }
+            if (prev.character === "{" || prev.character === "(" || prev.character === ":") {
+                this.tabDepth++;
+            }
+            for (let i = 0; i < this.tabDepth; i++) {
+                this.sequence.push({
+                    character: " ".repeat(this.tabNumberOfSpaces),
+                    state: CharacterState.CORRECT,
+                });
+                this.position++;
             }
             return
+        }
+
+        if (this.gameMode === 'zen' && e.key === "}") {
+            if (this.tabDepth > 0) {
+                this.sequence.pop();
+                this.position--;
+                this.tabDepth--;
+            }
         }
 
         if (this.gameMode === 'zen' && e.key !== "Backspace") {
@@ -174,11 +195,13 @@ export class Game {
             if (this.sequence.length === 0) {
                 return
             }
-            this.sequence.pop();
+            let char = this.sequence.pop();
+            if (char?.character === "{" && this.tabDepth > 0) {
+                    this.tabDepth--;
+            }
             this.position--;
             return
         }
-        e.preventDefault();
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if (this.position > 0) {

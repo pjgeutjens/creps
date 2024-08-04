@@ -1,14 +1,11 @@
 <script lang="ts">
-    import { alphabet } from "$lib/alphabet";
-    import { CharacterState, Game } from "$lib/game";
-    import { game, get_at, get_current, get_next } from "$lib/stores";
+    import { game } from "$lib/stores";
     import { letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
+    
     import LanguageSelect from "./LanguageSelect.svelte";
-
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
-    import { get } from "svelte/store";
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
@@ -43,11 +40,11 @@
         if (!timerRunning) {
             timerRunning = true;
             timer = setInterval(() => {
-                // TODO: Fix this randomness with the countdown timer for infinity
                 $game.testTimeElapsed++;
                 $game.totalTimeElapsed++;
-                if ($game.duration > 0) {
+                if (!$game.isInfinite()) {
                     if ($game.totalTimeElapsed >= $game.duration) {
+                        console.log("Game over");
                         clearInterval(timer);
                         endGame();
                     }
@@ -57,6 +54,7 @@
     }
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
+        console.log(e.code, e.ctrlKey)
         $game.handleKeydown(e);
         $game.language = $game.language;
     }
@@ -85,13 +83,9 @@
             {/each}
         {/if}
     </div>
-    <!-- <div>
-        {$game.letter_count} 
-        {#each $game.sequence as letter, index}
-            {letter.state[0]}
-            
-        {/each}
-    </div> -->
+    <div>
+        { $game.tabDepth} { $game.position} { $game.sequence.length}
+    </div>
 </div>
 
 <style>
