@@ -128,7 +128,7 @@ export class Game {
 
 
     handleKeydown(e: KeyboardEvent) {
-        e.preventDefault();{{}}
+        e.preventDefault(); { { } }
         if (this.state === "ended" || this.state === "paused") {
             this.start()
             return;
@@ -147,7 +147,7 @@ export class Game {
             this.position++;
             return
         }
-        
+
         if (this.gameMode === 'zen' && e.key === "Delete") {
             this.sequence = this.sequence.slice(0, this.position).concat(this.sequence.slice(this.position + 1));
             this.position--;
@@ -157,10 +157,11 @@ export class Game {
         if (this.gameMode === 'zen' && e.key === "Enter") {
             prev = this.get_at(this.position - 1);
             this.sequence.push({
-                character: char_enter,
+                character: '\n',
                 state: CharacterState.CORRECT,
             });
             this.position++;
+            // TODO something still not right in python with the tabbing for colon
             if (prev.character === "{" || prev.character === "(" || prev.character === ":") {
                 this.tabDepth++;
             }
@@ -175,9 +176,9 @@ export class Game {
         }
 
         if (this.gameMode === 'zen' && e.key === "}") {
-            if (this.tabDepth > 0) {
                 this.sequence.pop();
                 this.position--;
+            if (this.tabDepth > 0) {
                 this.tabDepth--;
             }
         }
@@ -196,10 +197,14 @@ export class Game {
                 return
             }
             let char = this.sequence.pop();
-            if (char?.character === "{" && this.tabDepth > 0) {
-                    this.tabDepth--;
+            if ((char?.character === "{" || char?.character === ":") && this.tabDepth > 0) {
+                this.tabDepth--;
             }
             this.position--;
+            while (this.position > 0 && !alphabet.has(this.sequence[this.position - 1]?.character)) {
+                this.sequence.pop();
+                this.position--;
+            }
             return
         }
         if (e.key.toLowerCase() === "backspace") {
@@ -209,7 +214,7 @@ export class Game {
                 if (this.gameMode === 'zen') {
                     this.sequence = this.sequence.slice(0, this.position);
                 } else {
-                this.sequence[this.position].state = CharacterState.REMAINING;
+                    this.sequence[this.position].state = CharacterState.REMAINING;
                 }
             }
         } else if (e.key.toLowerCase() === "enter") {
@@ -347,7 +352,7 @@ export class Game {
 
     reset() {
         console.log("resetting")
-        this.tests = this.gameMode === 'zen' ? [] :  getTestFunctions(this.language, this.gameMode, 6);
+        this.tests = this.gameMode === 'zen' ? [] : getTestFunctions(this.language, this.gameMode, 6);
         this.state = 'paused';
         this.testIndex = 0;
         if (this.gameMode === 'zen') {

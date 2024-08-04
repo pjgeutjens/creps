@@ -5,5 +5,5 @@ export function letterToHtml(letter: string) {
     if (letter.charCodeAt(0) === 32) {
         return `&ensp;`;
     }
-    return `${letter}`;
+    return `${letter}`
 }
