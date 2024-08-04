@@ -1,6 +1,6 @@
 <script lang="ts">
     import { game } from "$lib/stores";
-    import { letterToHtml } from "$lib/utils";
+    import { isLast, letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
     
     import LanguageSelect from "./LanguageSelect.svelte";
@@ -78,7 +78,7 @@
                         ? 'active-after'
                         : ''} {($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position) 
                         ? 'active' : ''}"
-                    >{@html letterToHtml(letter.character)}</letter
+                    >{@html letterToHtml(letter.character, isLast(index, $game.sequence))}</letter
                 >
             {/each}
         {/if}

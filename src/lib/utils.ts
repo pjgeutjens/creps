@@ -1,4 +1,7 @@
-export function letterToHtml(letter: string) {
+export function letterToHtml(letter: string, isLast: boolean = false) {
+    if (letter.charCodeAt(0) === 10 && isLast) {
+        return '';
+    }
     if (letter.charCodeAt(0) === 10) {
         return `<br/>`;
     }
@@ -6,4 +9,8 @@ export function letterToHtml(letter: string) {
         return `&ensp;`;
     }
     return `${letter}`
+}
+
+export function isLast(index: number, array: any[]) {
+    return index === array.length - 1;
 }
