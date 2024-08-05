@@ -85,7 +85,7 @@ export class Game {
         this.randy = Math.random();
         this.sequence = []
         this.setInitialSequence(this.gameMode);
-        this.state = 'paused';
+        this.state = 'setup';
         this.history = [];
         this.error_pos = new Set();
         this.letter_count = 0;
@@ -103,15 +103,18 @@ export class Game {
         this.wpm = 0;
     }
 
-    setInitialSequence(mode: string) {
+    setInitialSequence(mode: 'functions' | 'patterns' | 'zen') {
+        this.tests = getTestFunctions(this.language, mode, 6);
         if (mode === 'zen') {
             this.sequence = [];
+            return
         } else {
             this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
                 character,
                 state: CharacterState.REMAINING,
             }));
         }
+        console.log("sequence", this.sequence)
     }
 
     toggleGameMode() {
@@ -130,7 +133,7 @@ export class Game {
 
     handleKeydown(e: KeyboardEvent) {
         e.preventDefault(); { { } }
-        if (this.state === "ended" || this.state === "paused") {
+        if (this.state === "ended" || this.state === "paused" || this.state === "setup") {
             this.start()
             return;
         }
@@ -359,16 +362,9 @@ export class Game {
     reset() {
         console.log("resetting")
         this.tests = this.gameMode === 'zen' ? [] : getTestFunctions(this.language, this.gameMode, 6);
-        this.state = 'paused';
+        this.state = 'setup';
         this.testIndex = 0;
-        if (this.gameMode === 'zen') {
-            this.sequence = [];
-        } else {
-            this.sequence = Array.from(this.tests[this.testIndex].content.trim()).map((character: string) => ({
-                character,
-                state: CharacterState.REMAINING,
-            }));
-        }
+        this.setInitialSequence(this.gameMode);
         this.position = 0;
         this.history = [];
         this.error_pos = new Set();
@@ -439,6 +435,10 @@ export class Game {
 
     pause() {
         this.state = 'paused';
+    }
+
+    resume() {
+        this.state = 'active';
     }
 
     getSequence() { return this.sequence }

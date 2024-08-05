@@ -56,21 +56,26 @@
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
         if (e.ctrlKey && e.key === "Escape") {
-            $game.showStatsOverlay = true
+            toggleStatsOverlay();
         }
         $game.handleKeydown(e);
         $game.language = $game.language;
     }
 
-    function showStatsOverlay() {
-        $game.showStatsOverlay = false;
+    function toggleStatsOverlay() {
+        $game.showStatsOverlay = !$game.showStatsOverlay;
+        if ($game.showStatsOverlay) {
+            $game.pause();
+        } else {
+            $game.resume();
+        }
     }
 </script>
 
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
     {#if $game.showStatsOverlay}
-        <StatsOverlay onClick={showStatsOverlay} />
+        <StatsOverlay onClick={toggleStatsOverlay} />
     {/if}
     <StartGameOverlay
         onClick={() => startGame()}
@@ -124,7 +129,7 @@
     .word-list {
         /* display: flex */
         gap: 10px;
-        width: 40%;
+        width: 50%;
         margin-bottom: 20px;
     }
     .word {

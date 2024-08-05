@@ -25,7 +25,7 @@
     }
     </style>
 
-{#if !($game.state === "active")}
+{#if ($game.state === "setup")}
 <button class="overlay" on:click={onClick}>
     
 <svg fill="#d1d0c5" width="18" height="18" version="1.1" id="lni_lni-pointer" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
