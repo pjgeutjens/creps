@@ -1,5 +1,8 @@
 <script>
     import { game } from "$lib/stores";
+    import { get } from "svelte/store";
+
+    let t = $game.timer;
 </script>
 <style>
         time {
@@ -9,8 +12,8 @@
 
 <time>
     {#if $game.isInfinite()}
-        {$game.totalTimeElapsed}
+        {($t.elapsed).toFixed(0)}
     {:else}
-        {($game.duration - $game.totalTimeElapsed).toFixed(0)}
+    {($t.remaining).toFixed(0)}
     {/if}
 </time>

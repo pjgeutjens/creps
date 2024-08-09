@@ -6,6 +6,7 @@
     import LanguageSelect from "./LanguageSelect.svelte";
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
+    import StatsOverlay from "./StatsOverlay.svelte";
 
     let timerRunning = false;
     let timer: NodeJS.Timeout;
@@ -39,29 +40,33 @@
     function checkTimer() {
         if (!timerRunning) {
             timerRunning = true;
-            timer = setInterval(() => {
-                $game.testTimeElapsed++;
-                $game.totalTimeElapsed++;
-                if (!$game.isInfinite()) {
-                    if ($game.totalTimeElapsed >= $game.duration) {
-                        console.log("Game over");
-                        clearInterval(timer);
-                        endGame();
-                    }
-                }
-            }, 1000);
+            $game.startTimer();
         }
     }
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
-        console.log(e.code, e.ctrlKey)
+        if (e.ctrlKey && e.key === "Escape") {
+            toggleStatsOverlay();
+        }
         $game.handleKeydown(e);
         $game.language = $game.language;
+    }
+
+    function toggleStatsOverlay() {
+        $game.showStatsOverlay = !$game.showStatsOverlay;
+        if ($game.showStatsOverlay) {
+            $game.pause();
+        } else {
+            $game.resume();
+        }
     }
 </script>
 
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
+    {#if $game.showStatsOverlay}
+        <StatsOverlay onClick={toggleStatsOverlay} />
+    {/if}
     <StartGameOverlay
         onClick={() => startGame()}
     />
@@ -83,9 +88,9 @@
             {/each}
         {/if}
     </div>
-    <div>
+    <!-- <div>
         { $game.tabDepth} { $game.position} { $game.sequence.length}
-    </div>
+    </div> -->
 </div>
 
 <style>
@@ -114,7 +119,7 @@
     .word-list {
         /* display: flex */
         gap: 10px;
-        width: 40%;
+        width: 50%;
         margin-bottom: 20px;
     }
     .word {

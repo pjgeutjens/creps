@@ -114,19 +114,19 @@
     <div class="duration-buttons">
         <button class="option-button">time</button>
         <button
-            on:click={() => {$game.duration = 30; $gameSettings.duration = 30}}
+            on:click={() => {$game.duration = 30; $gameSettings.duration = 30; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.duration === 30}>30</button
         >
         <button
-            on:click={() => {$game.duration = 60; $gameSettings.duration = 60}}
+            on:click={() => {$game.duration = 60; $gameSettings.duration = 60; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.duration === 60}>60</button
         >
         <button
-            on:click={() => {$game.duration = 120; $gameSettings.duration = 120}}
+            on:click={() => {$game.duration = 120; $gameSettings.duration = 120; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.duration === 120}>120</button
         >
         <button
-            on:click={() => {$game.duration = 0; $gameSettings.duration = 0}}
+            on:click={() => {$game.duration = 0; $gameSettings.duration = 0; $game.reset(); $game.randy = Math.random()}}
             class:selected={$game.duration === 0} class="infinity">∞</button
         >
         <!-- <button on:click={() => setRandomTheme()}>{$gameSettings.theme}</button> -->
