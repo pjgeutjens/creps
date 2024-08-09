@@ -40,17 +40,7 @@
     function checkTimer() {
         if (!timerRunning) {
             timerRunning = true;
-            timer = setInterval(() => {
-                $game.testTimeElapsed++;
-                $game.totalTimeElapsed++;
-                if (!$game.isInfinite()) {
-                    if ($game.totalTimeElapsed >= $game.duration) {
-                        console.log("Game over");
-                        clearInterval(timer);
-                        endGame();
-                    }
-                }
-            }, 1000);
+            $game.startTimer();
         }
     }
     function onkeydown(e: KeyboardEvent) {

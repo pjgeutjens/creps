@@ -1,3 +1,4 @@
+import { get, writable, type Writable } from "svelte/store";
 import { alphabet } from "./alphabet";
 import { getTestFunctions, type TestFunction } from "./tests";
 
@@ -46,6 +47,16 @@ type HistoryItem = {
     accuracy: number,
 }
 
+type Timer = {
+    start: number | null,
+    end: number | null,
+    remaining: number,
+    elapsed: number,
+    running: boolean,
+    paused: boolean,
+    _interval: NodeJS.Timeout | null,
+}
+
 export class Game {
     position: number;
     tests: TestFunction[];
@@ -72,6 +83,7 @@ export class Game {
     tabDepth: number
     tabNumberOfSpaces: number = 2
     showStatsOverlay: boolean = false
+    timer: Writable<Timer>
 
     constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
         console.log("l", language)
@@ -94,6 +106,15 @@ export class Game {
         this.end_time = null;
         this.was_skipped = false;
         this.tabDepth = 0;
+        this.timer = writable({
+            start: null,
+            end: null,
+            remaining: this.duration,
+            elapsed: 0,
+            running: false,
+            paused: false,
+            _interval: null,
+        })
 
 
         this.first = true;
@@ -101,6 +122,68 @@ export class Game {
         this.totalTimeElapsed = 0;
         this.accuracy = 0;
         this.wpm = 0;
+    }
+
+    startTimer() {
+        this.timer.set({
+            start: new Date().getTime(),
+            end: new Date().getTime() + this.duration * 1000,
+            remaining: this.duration,
+            elapsed: 0,
+            running: true,
+            paused: false,
+            _interval: setInterval(() => {
+                this.timer.update((timer) => {
+                    if (timer.running && !timer.paused) {
+                        let timeElapsed = new Date().getTime() - timer.start!;
+                        timer.elapsed = timeElapsed / 1000;
+                        timer.remaining = Math.max(0, this.duration - timer.elapsed);
+                        if (timer.elapsed >= timer.remaining * 1000) {
+                            this.end();
+                        }
+                    }
+                    return timer;
+                })
+            }, 1000)
+        })
+    }
+
+    pauseTimer() {
+        this.timer.update((timer) => {
+            timer.paused = true;
+            timer.running = false;
+            clearInterval(timer._interval!);
+            return timer;
+        })
+    }
+
+    resumeTimer() {
+        this.timer.update((timer) => {
+            timer.paused = false;
+            timer.running = true;
+            timer.start = new Date().getTime() - timer.elapsed;
+            timer._interval = setInterval(() => {
+                this.timer.update((timer) => {
+                    if (timer.running && !timer.paused) {
+                        timer.elapsed = new Date().getTime() - timer.start!;
+                        if (timer.elapsed >= timer.remaining * 1000) {
+                            this.end();
+                        }
+                    }
+                    return timer;
+                })
+            }, 1000)
+            return timer;
+        })
+    }
+
+    endTimer() {
+        this.timer.update((timer) => {
+            timer.running = false;
+            timer.paused = false;
+            clearInterval(timer._interval!);
+            return timer;
+        })
     }
 
     setInitialSequence(mode: 'functions' | 'patterns' | 'zen') {
@@ -139,12 +222,12 @@ export class Game {
         }
         let current, next, prev;
 
-        if (e.key === "Shift" || 
-            e.key === "CapsLock" || 
-            e.key === "Control" || 
-            e.key === "Alt" || 
-            e.key === "Meta" || 
-            e.key === "Escape" ) {
+        if (e.key === "Shift" ||
+            e.key === "CapsLock" ||
+            e.key === "Control" ||
+            e.key === "Alt" ||
+            e.key === "Meta" ||
+            e.key === "Escape") {
             return
         }
 
@@ -185,8 +268,8 @@ export class Game {
         }
 
         if (this.gameMode === 'zen' && e.key === "}") {
-                this.sequence.pop();
-                this.position--;
+            this.sequence.pop();
+            this.position--;
             if (this.tabDepth > 0) {
                 this.tabDepth--;
             }
@@ -362,6 +445,17 @@ export class Game {
     reset() {
         console.log("resetting")
         this.tests = this.gameMode === 'zen' ? [] : getTestFunctions(this.language, this.gameMode, 6);
+        this.timer.set({
+            start: null,
+            end: null,
+            remaining: this.duration,
+            elapsed: 0,
+            running: false,
+            paused: false,
+            _interval: null,
+        })
+        console.log(get(this.timer))
+
         this.state = 'setup';
         this.testIndex = 0;
         this.setInitialSequence(this.gameMode);
@@ -372,7 +466,7 @@ export class Game {
         this.word_count = 0;
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
-        this.duration = this.gameMode === 'zen' ? 0 : this.duration;
+        // this.duration = this.gameMode === 'zen' ? 0 : this.duration;
     }
 
     updateStats() {
