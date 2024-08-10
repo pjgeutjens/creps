@@ -545,11 +545,13 @@ export class Game {
     }
 
     pause() {
+        console.log("pausing")
         this.state = 'paused';
         this.pauseTimer();
     }
 
     resume() {
+        console.log("resuming")
         this.state = 'active';
         this.resumeTimer();
     }

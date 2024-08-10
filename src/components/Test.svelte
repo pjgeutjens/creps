@@ -50,6 +50,7 @@
             toggleStatsOverlay();
         }
         $game.handleKeydown(e);
+        $game.language = $game.language;
         $game.randy = Math.random();
     }  
 
