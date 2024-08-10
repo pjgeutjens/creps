@@ -13,9 +13,10 @@
 
     let unsubscribe = game.subscribe((currentValue) => {
         if (currentValue.language === $game.language && currentValue.gameMode === $game.gameMode) {
+            console.log("hem")
             return;
         }
-        console.log("Game changed", currentValue);
+        console.log("Game restart", currentValue);
         startGame();
     });
 
@@ -49,8 +50,8 @@
             toggleStatsOverlay();
         }
         $game.handleKeydown(e);
-        $game.language = $game.language;
-    }
+        $game.randy = Math.random();
+    }  
 
     function toggleStatsOverlay() {
         $game.showStatsOverlay = !$game.showStatsOverlay;

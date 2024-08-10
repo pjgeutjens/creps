@@ -2,7 +2,6 @@
     import { game } from "$lib/stores";
 
     export let onClick;
-    let gameActive;
 </script>
 
 <style>

@@ -138,7 +138,7 @@ export class Game {
                         let timeElapsed = new Date().getTime() - timer.start!;
                         timer.elapsed = timeElapsed / 1000;
                         timer.remaining = Math.max(0, this.duration - timer.elapsed);
-                        if (timer.elapsed >= timer.remaining * 1000) {
+                        if (!this.isInfinite() && timer.elapsed >= timer.remaining * 1000) {
                             this.end();
                         }
                     }
@@ -216,21 +216,22 @@ export class Game {
 
     handleKeydown(e: KeyboardEvent) {
         e.preventDefault(); { { } }
-        if (this.state === "ended" || this.state === "paused" || this.state === "setup") {
+        if (this.state === "setup") {
             this.start()
             return;
         }
         let current, next, prev;
 
-        if (e.key === "Shift" ||
+        if (e.ctrlKey || e.altKey || e.metaKey ||
+            e.key === "Shift" ||
             e.key === "CapsLock" ||
             e.key === "Control" ||
             e.key === "Alt" ||
             e.key === "Meta" ||
             e.key === "Escape") {
-            return
+                console.log("skipping")
+                return
         }
-
         if (e.key === "Tab") {
             this.sequence.push({
                 character: " ".repeat(this.tabNumberOfSpaces),
@@ -456,7 +457,7 @@ export class Game {
         })
         console.log(get(this.timer))
 
-        this.state = 'setup';
+        this.state = 'paused';
         this.testIndex = 0;
         this.setInitialSequence(this.gameMode);
         this.position = 0;
@@ -467,6 +468,14 @@ export class Game {
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
         // this.duration = this.gameMode === 'zen' ? 0 : this.duration;
+    }
+
+    getRemainingTime() {
+        return get(this.timer).remaining;
+    }
+
+    getElapsedTime() {
+        return get(this.timer).elapsed;
     }
 
     updateStats() {
@@ -529,10 +538,12 @@ export class Game {
 
     pause() {
         this.state = 'paused';
+        this.pauseTimer();
     }
 
     resume() {
         this.state = 'active';
+        this.resumeTimer();
     }
 
     getSequence() { return this.sequence }

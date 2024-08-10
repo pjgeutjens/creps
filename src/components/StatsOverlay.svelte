@@ -1,5 +1,6 @@
 <script>
     import { game } from "$lib/stores";
+    import { get } from "svelte/store";
 
     export let onClick;
 </script>
@@ -10,7 +11,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.60); /* Slightly lighter black overlay */
+        background: rgba(0, 0, 0, 0.10); /* Slightly lighter black overlay */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -27,5 +28,8 @@
 {#if ($game.showStatsOverlay)}
 <button class="overlay" on:click={onClick}>
     STATS
+    {$game.getElapsedTime()}
+    {$game.getRemainingTime()}
+    {$game.state}
 </button>
 {/if}
