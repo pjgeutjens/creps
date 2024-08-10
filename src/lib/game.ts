@@ -480,7 +480,15 @@ export class Game {
     }
 
     calculateWPM() {
-        return (this.letter_count / this.testTimeElapsed) * 60 / 5;
+        return (this.letter_count / this.getTimeElapsed()) * 60 / 5;
+    }
+
+    getTimeRemaining() {
+        return get(this.timer).remaining;
+    }
+
+    getTimeElapsed() {
+        return get(this.timer).elapsed;
     }
 
     calculateGlobalAccuracy() {
