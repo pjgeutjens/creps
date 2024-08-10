@@ -8,10 +8,11 @@
 <style>
     .overlay {
         position: fixed;
+        z-index: 1000;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.10); /* Slightly lighter black overlay */
+        background: rgba(0, 0, 0, 0.60); /* Slightly lighter black overlay */
         display: flex;
         justify-content: center;
         align-items: center;

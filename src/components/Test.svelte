@@ -90,9 +90,9 @@
             {/each}
         {/if}
     </div>
-    <!-- <div>
-        { $game.tabDepth} { $game.position} { $game.sequence.length}
-    </div> -->
+    <div>
+        { $game.state}
+    </div>
 </div>
 
 <style>
