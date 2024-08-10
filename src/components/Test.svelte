@@ -77,7 +77,7 @@
             <Timer />
             <LanguageSelect />
         </section>
-        {#if $game.state === "active"}
+        {#if $game.state !== "setup"}
             {#each $game.sequence as letter, index}
                 <letter
                     class="{letter.state} {
