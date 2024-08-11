@@ -26,11 +26,14 @@
     }
     </style>
 
-{#if ($game.showStatsOverlay)}
+{#if ($game.showStatsOverlay || $game.state === "ended")}
 <button class="overlay" on:click={onClick}>
     STATS
-    {$game.getElapsedTime()}
-    {$game.getRemainingTime()}
-    {$game.state}
+    {$game.calculateWPM()} WPM
+    {$game.calculateAccuracy().toFixed(2)}% ACC
+
+    {#if ($game.state === "ended")}
+        done
+    {/if}
 </button>
 {/if}

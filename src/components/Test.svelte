@@ -58,8 +58,6 @@
         $game.showStatsOverlay = !$game.showStatsOverlay;
         if ($game.showStatsOverlay) {
             $game.pause();
-        } else {
-            $game.resume();
         }
     }
 </script>
@@ -90,9 +88,9 @@
             {/each}
         {/if}
     </div>
-    <div>
+    <!-- <div>
         { $game.state}
-    </div>
+    </div> -->
 </div>
 
 <style>

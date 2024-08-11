@@ -16,4 +16,13 @@
     {:else}
     {($t.remaining).toFixed(0)}
     {/if}
+    {#if !$t.running}
+    <i class="fa-solid fa-pause"></i>
+    {/if}
+
+
+    
+    <!-- <button on:click={() => $game.stopTimer()}>stop</button>
+    <button on:click={() => $game.startTimer()}>start</button>
+    <button on:click={() => $game.resetTimer()}>reset</button> -->
 </time>
