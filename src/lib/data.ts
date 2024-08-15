@@ -595,7 +595,6 @@ export const tests = [
     },
     {
         content: `class User {
-        name: string;
       private constructor() {}
     }`,
         description: "Singleton pattern in TypeScript.",

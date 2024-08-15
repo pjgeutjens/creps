@@ -15,24 +15,9 @@ export type Part = {
     state: CharacterState;
 };
 
-export type GameState = {
-    position: number;
-    sequence: Part[];
-    next: string[];
-    get_current: () => Part;
-    get_next: () => Part;
-    get_at: (position: number) => Part;
-    letter_count: number,
-    word_count: number,
-    start_time: number | null,
-    done: () => void,
-    error_pos: Set<number>,
-    was_skipped: false,
-    first: true,
-    duration: number,
-    accuracy: number,
-    wpm: number,
-};
+export type languages = 'javascript' | 'python' | 'golang' | 'typescript' | 'bash'
+
+export type gameModes = 'functions' | 'patterns' | 'zen'
 
 type HistoryItem = {
     functionName: string,
@@ -57,7 +42,7 @@ export class Game {
     tests: TestFunction[];
     testIndex: number;
     state: 'setup' | 'active' | 'ended' | 'paused';
-    gameMode: 'functions' | 'patterns' | 'zen';
+    gameMode: gameModes;
     sequence: Part[];
     history: HistoryItem[];
     ignoreSemicolon: boolean;
@@ -69,13 +54,12 @@ export class Game {
     end_time: number | null;
     error_pos: Set<number>;
     was_skipped: boolean;
-    first: boolean;
     testTimeElapsed: number;
     totalTimeElapsed: number;
     accuracy: number;
     wpm: number;
     randy: number
-    tabDepth: number
+    tabDepth: number = 0
     tabNumberOfSpaces: number = 2
     showStatsOverlay: boolean = false
     timer: Writable<Timer>
@@ -110,9 +94,6 @@ export class Game {
             paused: false,
             _interval: null,
         })
-
-
-        this.first = true;
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
         this.accuracy = 0;

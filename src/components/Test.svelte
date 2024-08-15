@@ -65,10 +65,10 @@
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
     {#if $game.showStatsOverlay}
-        <StatsOverlay onClick={toggleStatsOverlay} />
+        <StatsOverlay on:click={toggleStatsOverlay} />
     {/if}
     <StartGameOverlay
-        onClick={() => startGame()}
+        on:click={startGame}
     />
     <div class="word-list">
         <section id="game">

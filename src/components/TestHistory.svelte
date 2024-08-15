@@ -45,42 +45,6 @@
         
     }
     .word-list {
-        /* display: flex; */
-        /* display: grid; */
-        /* gap: 10px; */
         margin-bottom: 20px;
-    }
-
-    .word::before {
-        content: "-> ";
-    }
-    letter {
-        color: var(----text-color);
-        position: relative;
-        font-size: 22px;
-
-        &.active::before {
-            content: "|";
-            color: var(--main-color);
-            font-size: 1em;
-            position: absolute;
-            left: -50%;
-            animation: 1s blink infinite ease-in-out;
-        }
-        &.is-last::before {
-            left: 65%;
-        }
-        &.correct {
-            color: var(--text-color);
-        }
-        &.incorrect {
-            color: var(--error);
-        }
-        &.remaining {
-            color: var(--text-color-subdued);
-        }
-        &.skipped {
-            border-bottom: 1px solid var(--error);
-        }
     }
 </style>

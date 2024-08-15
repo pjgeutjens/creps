@@ -4,8 +4,10 @@
     // import { startGame } from "./Test.svelte";
     let showLanguageModal = false;
 
-    async function onLanguageChange() {
-    //     await startGame();
+    async function onLanguageSelect(language: string) {
+        $game.language = language;
+        $game.reset();
+        showLanguageModal = false;
     }
 
 </script>
@@ -45,23 +47,23 @@
 {#if showLanguageModal}
 <div id="language-select-modal">
         <button class="select-button"
-            on:click={() => { $game.language = "javascript"; $game.reset(); showLanguageModal = false}}
+            on:click={() => onLanguageSelect("javascript")}
             class:selected={$game.language === "javascript"}>javascript</button
         >
         <button class="select-button"
-        on:click={() => {console.log($game);$game.language = "typescript"; $game.reset(); showLanguageModal = false}}
+        on:click={() => onLanguageSelect("typescript")}
             class:selected={$game.language === "typescript"}>typescript</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "python"; $game.reset(); showLanguageModal = false}}
+        on:click={() => onLanguageSelect("python")}
             class:selected={$game.language === "python"}>python</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "golang"; $game.reset(); showLanguageModal = false}}
+        on:click={() => onLanguageSelect("golang")}
             class:selected={$game.language === "golang"}>golang</button
         >
         <button class="select-button"
-        on:click={() => {$game.language = "bash"; $game.reset(); showLanguageModal = false}}
+        on:click={() => onLanguageSelect("bash")}
             class:selected={$game.language === "bash"}>bash</button
         >
 </div>

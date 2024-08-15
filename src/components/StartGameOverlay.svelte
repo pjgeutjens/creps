@@ -1,7 +1,5 @@
 <script>
     import { game } from "$lib/stores";
-
-    export let onClick;
 </script>
 
 <style>
@@ -25,7 +23,7 @@
     </style>
 
 {#if ($game.state === "setup")}
-<button class="overlay" on:click={onClick}>
+<button class="overlay" on:click>
     
 <svg fill="#d1d0c5" width="18" height="18" version="1.1" id="lni_lni-pointer" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
 	 y="0px" viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
