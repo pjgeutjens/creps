@@ -45,7 +45,7 @@ export class Game {
     gameMode: gameModes;
     sequence: Part[];
     history: HistoryItem[];
-    ignoreSemicolon: boolean;
+    ignoreSemicolon: boolean = false;
     language: string;
     duration: number;
     letter_count: number;
@@ -64,12 +64,12 @@ export class Game {
     showStatsOverlay: boolean = false
     timer: Writable<Timer>
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'functions') {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: gameModes = 'functions') {
         console.log("l", language)
         this.gameMode = gameMode;
         this.tests = getTestFunctions(language, gameMode, 6);
         this.testIndex = 0;
-        this.ignoreSemicolon = ignoreSemicolon;
+        // this.ignoreSemicolon = ignoreSemicolon;
         this.language = language;
         this.duration = duration;
         this.position = 0;
@@ -101,6 +101,7 @@ export class Game {
     }
 
     startTimer() {
+        console.log("starting timer")
         const newStartTime = get(this.timer).start === null ? new Date().getTime() : get(this.timer).start;
         const newEndTime = get(this.timer).end === null ? new Date().getTime() + this.duration * 1000 : get(this.timer).end;
         const newRemaining = get(this.timer).remaining === this.duration ? this.duration : get(this.timer).remaining;
@@ -180,7 +181,7 @@ export class Game {
             e.key === "Shift" ||
             e.key === "CapsLock" ||
             e.key === "Escape") {
-                console.log("skipping")
+                console.log("esc")
                 return
         }
 
@@ -287,6 +288,7 @@ export class Game {
             }
             return
         }
+
         if (e.key.toLowerCase() === "backspace") {
             console.log("processing backspace");
             if (this.position > 0) {

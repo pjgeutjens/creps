@@ -2,18 +2,20 @@
     import { game } from "$lib/stores";
     import { isLast, letterToHtml } from "$lib/utils";
     import { onDestroy } from "svelte";
-    
+
     import LanguageSelect from "./LanguageSelect.svelte";
     import StartGameOverlay from "./StartGameOverlay.svelte";
     import Timer from "./Timer.svelte";
     import StatsOverlay from "./StatsOverlay.svelte";
+    import { get } from "svelte/store";
 
-    let timerRunning = false;
     let timer: NodeJS.Timeout;
 
     let unsubscribe = game.subscribe((currentValue) => {
-        if (currentValue.language === $game.language && currentValue.gameMode === $game.gameMode) {
-            console.log("hem")
+        if (
+            currentValue.language === $game.language &&
+            currentValue.gameMode === $game.gameMode
+        ) {
             return;
         }
         console.log("Game restart", currentValue);
@@ -25,7 +27,6 @@
     });
 
     function startGame() {
-        timerRunning = false;
         if (timer) {
             clearInterval(timer);
         }
@@ -35,15 +36,15 @@
 
     function endGame() {
         // gameActive = false;
-        $game.end()
+        $game.end();
     }
 
     function checkTimer() {
-        if (!timerRunning) {
-            timerRunning = true;
+        if (!get($game.timer).running) {
             $game.startTimer();
         }
     }
+    
     function onkeydown(e: KeyboardEvent) {
         checkTimer();
         if (e.ctrlKey && e.key === "Escape") {
@@ -52,7 +53,7 @@
         $game.handleKeydown(e);
         $game.language = $game.language;
         $game.randy = Math.random();
-    }  
+    }
 
     function toggleStatsOverlay() {
         $game.showStatsOverlay = !$game.showStatsOverlay;
@@ -67,9 +68,7 @@
     {#if $game.showStatsOverlay}
         <StatsOverlay on:click={toggleStatsOverlay} />
     {/if}
-    <StartGameOverlay
-        on:click={startGame}
-    />
+    <StartGameOverlay on:click={startGame} />
     <div class="word-list">
         <section id="game">
             <Timer />
@@ -78,12 +77,18 @@
         {#if $game.state !== "setup"}
             {#each $game.sequence as letter, index}
                 <letter
-                    class="{letter.state} {
-                        ($game.gameMode === 'zen' && index === $game.sequence.length - 1 ) 
+                    class="{letter.state} {$game.gameMode === 'zen' &&
+                    index === $game.sequence.length - 1
                         ? 'active-after'
-                        : ''} {($game.gameMode === 'functions' && index === $game.position) || ($game.gameMode === 'patterns' && index === $game.position) 
-                        ? 'active' : ''}"
-                    >{@html letterToHtml(letter.character, isLast(index, $game.sequence))}</letter
+                        : ''} {($game.gameMode === 'functions' &&
+                        index === $game.position) ||
+                    ($game.gameMode === 'patterns' && index === $game.position)
+                        ? 'active'
+                        : ''}"
+                    >{@html letterToHtml(
+                        letter.character,
+                        isLast(index, $game.sequence),
+                    )}</letter
                 >
             {/each}
         {/if}
