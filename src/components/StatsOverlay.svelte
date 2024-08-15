@@ -24,7 +24,7 @@
 {#if ($game.showStatsOverlay || $game.state === "ended")}
 <button class="overlay" on:click>
     STATS
-    {$game.calculateWPM()} WPM
+    {$game.calculateWPM().toFixed(2)} WPM
     {$game.calculateAccuracy().toFixed(2)}% ACC
 
     {#if ($game.state === "ended")}
