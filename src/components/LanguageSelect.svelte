@@ -19,7 +19,7 @@
         top: 50%;
         left: 65%;
         width: 200px;
-        height: 220px;
+        height: 180px;
         background-color: var(--backround-color);
         border: 1px solid var(--main-color);
         border-radius: 8px;
@@ -62,9 +62,9 @@
         on:click={() => onLanguageSelect("golang")}
             class:selected={$game.language === "golang"}>golang</button
         >
-        <button class="select-button"
+        <!-- <button class="select-button"
         on:click={() => onLanguageSelect("bash")}
             class:selected={$game.language === "bash"}>bash</button
-        >
+        > -->
 </div>
 {/if}

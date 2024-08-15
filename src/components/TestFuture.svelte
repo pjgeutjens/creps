@@ -5,6 +5,7 @@
     const getFunctionSignatureFromText = (text: string) => {
         // return the contents of text up to the first curly bracket
         let header
+        return text.split("(")[0].replaceAll("def", "").replaceAll("function", "").replaceAll("func", "").trim();
         if ($game.language === "python") {
             header = text.split(":")[0].replaceAll("def", "").trim();
         } else if ($game.language === "javascript") {
