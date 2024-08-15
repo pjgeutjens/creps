@@ -13,9 +13,10 @@
 
     let unsubscribe = game.subscribe((currentValue) => {
         if (currentValue.language === $game.language && currentValue.gameMode === $game.gameMode) {
+            console.log("hem")
             return;
         }
-        console.log("Game changed", currentValue);
+        console.log("Game restart", currentValue);
         startGame();
     });
 
@@ -50,14 +51,13 @@
         }
         $game.handleKeydown(e);
         $game.language = $game.language;
-    }
+        $game.randy = Math.random();
+    }  
 
     function toggleStatsOverlay() {
         $game.showStatsOverlay = !$game.showStatsOverlay;
         if ($game.showStatsOverlay) {
             $game.pause();
-        } else {
-            $game.resume();
         }
     }
 </script>
@@ -65,17 +65,17 @@
 <svelte:window on:keydown={onkeydown} />
 <div class="game-container">
     {#if $game.showStatsOverlay}
-        <StatsOverlay onClick={toggleStatsOverlay} />
+        <StatsOverlay on:click={toggleStatsOverlay} />
     {/if}
     <StartGameOverlay
-        onClick={() => startGame()}
+        on:click={startGame}
     />
     <div class="word-list">
         <section id="game">
             <Timer />
             <LanguageSelect />
         </section>
-        {#if $game.state === "active"}
+        {#if $game.state !== "setup"}
             {#each $game.sequence as letter, index}
                 <letter
                     class="{letter.state} {
@@ -89,7 +89,7 @@
         {/if}
     </div>
     <!-- <div>
-        { $game.tabDepth} { $game.position} { $game.sequence.length}
+        { $game.state}
     </div> -->
 </div>
 

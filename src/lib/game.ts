@@ -15,29 +15,9 @@ export type Part = {
     state: CharacterState;
 };
 
-const char_enter = `
-`
-let tabNumberOfSpaces = 4;
+export type languages = 'javascript' | 'python' | 'golang' | 'typescript' | 'bash'
 
-
-export type GameState = {
-    position: number;
-    sequence: Part[];
-    next: string[];
-    get_current: () => Part;
-    get_next: () => Part;
-    get_at: (position: number) => Part;
-    letter_count: number,
-    word_count: number,
-    start_time: number | null,
-    done: () => void,
-    error_pos: Set<number>,
-    was_skipped: false,
-    first: true,
-    duration: number,
-    accuracy: number,
-    wpm: number,
-};
+export type gameModes = 'functions' | 'patterns' | 'zen'
 
 type HistoryItem = {
     functionName: string,
@@ -62,7 +42,7 @@ export class Game {
     tests: TestFunction[];
     testIndex: number;
     state: 'setup' | 'active' | 'ended' | 'paused';
-    gameMode: 'functions' | 'patterns' | 'zen';
+    gameMode: gameModes;
     sequence: Part[];
     history: HistoryItem[];
     ignoreSemicolon: boolean;
@@ -74,18 +54,17 @@ export class Game {
     end_time: number | null;
     error_pos: Set<number>;
     was_skipped: boolean;
-    first: boolean;
     testTimeElapsed: number;
     totalTimeElapsed: number;
     accuracy: number;
     wpm: number;
     randy: number
-    tabDepth: number
+    tabDepth: number = 0
     tabNumberOfSpaces: number = 2
     showStatsOverlay: boolean = false
     timer: Writable<Timer>
 
-    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'zen') {
+    constructor(language: string, ignoreSemicolon: boolean = false, duration: number = 30, gameMode: 'functions' | 'zen' = 'functions') {
         console.log("l", language)
         this.gameMode = gameMode;
         this.tests = getTestFunctions(language, gameMode, 6);
@@ -115,9 +94,6 @@ export class Game {
             paused: false,
             _interval: null,
         })
-
-
-        this.first = true;
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
         this.accuracy = 0;
@@ -125,30 +101,33 @@ export class Game {
     }
 
     startTimer() {
+        const newStartTime = get(this.timer).start === null ? new Date().getTime() : get(this.timer).start;
+        const newEndTime = get(this.timer).end === null ? new Date().getTime() + this.duration * 1000 : get(this.timer).end;
+        const newRemaining = get(this.timer).remaining === this.duration ? this.duration : get(this.timer).remaining;
+        const newElapsed = get(this.timer).elapsed === 0 ? 0 : get(this.timer).elapsed;
+        clearInterval(get(this.timer)._interval!);
         this.timer.set({
-            start: new Date().getTime(),
-            end: new Date().getTime() + this.duration * 1000,
-            remaining: this.duration,
-            elapsed: 0,
+            start: newStartTime,
+            end: newEndTime,
+            remaining: newRemaining,
+            elapsed: newElapsed,
             running: true,
             paused: false,
             _interval: setInterval(() => {
                 this.timer.update((timer) => {
-                    if (timer.running && !timer.paused) {
-                        let timeElapsed = new Date().getTime() - timer.start!;
-                        timer.elapsed = timeElapsed / 1000;
-                        timer.remaining = Math.max(0, this.duration - timer.elapsed);
-                        if (timer.elapsed >= timer.remaining * 1000) {
-                            this.end();
+                        timer.elapsed++;
+                        timer.remaining = this.duration - timer.elapsed;
+                        if (!this.isInfinite() && timer.remaining < 0) {
+                        this.end();
                         }
-                    }
+                    
                     return timer;
                 })
             }, 1000)
         })
     }
 
-    pauseTimer() {
+    stopTimer() {
         this.timer.update((timer) => {
             timer.paused = true;
             timer.running = false;
@@ -157,23 +136,15 @@ export class Game {
         })
     }
 
-    resumeTimer() {
-        this.timer.update((timer) => {
-            timer.paused = false;
-            timer.running = true;
-            timer.start = new Date().getTime() - timer.elapsed;
-            timer._interval = setInterval(() => {
-                this.timer.update((timer) => {
-                    if (timer.running && !timer.paused) {
-                        timer.elapsed = new Date().getTime() - timer.start!;
-                        if (timer.elapsed >= timer.remaining * 1000) {
-                            this.end();
-                        }
-                    }
-                    return timer;
-                })
-            }, 1000)
-            return timer;
+    resetTimer() {
+        this.timer.set({
+            start: null,
+            end: null,
+            remaining: this.duration,
+            elapsed: 0,
+            running: false,
+            paused: false,
+            _interval: null,
         })
     }
 
@@ -200,36 +171,53 @@ export class Game {
         console.log("sequence", this.sequence)
     }
 
-    toggleGameMode() {
-        switch (this.gameMode) {
-            case 'functions':
-                console.log("switching to zen")
-                this.gameMode = 'zen';
-                break;
-            case 'zen':
-                console.log("switching to functions")
-                this.gameMode = 'functions';
-                break;
-        }
-    }
-
-
     handleKeydown(e: KeyboardEvent) {
         e.preventDefault(); { { } }
-        if (this.state === "ended" || this.state === "paused" || this.state === "setup") {
+
+        let current, next, prev;
+
+        if (e.ctrlKey || e.altKey || e.metaKey ||
+            e.key === "Shift" ||
+            e.key === "CapsLock" ||
+            e.key === "Escape") {
+                console.log("skipping")
+                return
+        }
+
+        if (this.state === "setup") {
             this.start()
             return;
         }
-        let current, next, prev;
+        if (this.state === "paused") {
+            this.startTimer();
+        }
+        if (this.state === "ended") {
+            return;
+        }
 
-        if (e.key === "Shift" ||
-            e.key === "CapsLock" ||
-            e.key === "Control" ||
-            e.key === "Alt" ||
-            e.key === "Meta" ||
-            e.key === "Escape") {
+        if(e.key === "ArrowLeft") {
+            if (this.position > 0) {
+                this.position--;
+            }
             return
         }
+
+        if (e.key === "ArrowRight") {
+            if (this.position < this.sequence.length) {
+                this.position++;
+            }
+            return
+        }
+
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+            // this.tabDepth++;
+            return
+        }
+
+        if (e.key === "Backspace" && this.position === 0) {
+            this.pause();
+        }
+
 
         if (e.key === "Tab") {
             this.sequence.push({
@@ -456,7 +444,7 @@ export class Game {
         })
         console.log(get(this.timer))
 
-        this.state = 'setup';
+        this.state = 'paused';
         this.testIndex = 0;
         this.setInitialSequence(this.gameMode);
         this.position = 0;
@@ -467,6 +455,14 @@ export class Game {
         this.testTimeElapsed = 0;
         this.totalTimeElapsed = 0;
         // this.duration = this.gameMode === 'zen' ? 0 : this.duration;
+    }
+
+    getRemainingTime() {
+        return get(this.timer).remaining;
+    }
+
+    getElapsedTime() {
+        return get(this.timer).elapsed;
     }
 
     updateStats() {
@@ -536,11 +532,15 @@ export class Game {
     }
 
     pause() {
+        console.log("pausing")
         this.state = 'paused';
+        this. stopTimer();
     }
 
     resume() {
+        console.log("resuming")
         this.state = 'active';
+        // this.startTimer();
     }
 
     getSequence() { return this.sequence }

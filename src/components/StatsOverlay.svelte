@@ -1,12 +1,12 @@
 <script>
     import { game } from "$lib/stores";
-
-    export let onClick;
+    import { get } from "svelte/store";
 </script>
 
 <style>
     .overlay {
         position: fixed;
+        z-index: 1000;
         left: 0;
         width: 100%;
         height: 100%;
@@ -19,13 +19,16 @@
         cursor: pointer;
         backdrop-filter: blur(6px);
     }
-    svg {
-        margin-right: 1em;
-    }
     </style>
 
-{#if ($game.showStatsOverlay)}
-<button class="overlay" on:click={onClick}>
+{#if ($game.showStatsOverlay || $game.state === "ended")}
+<button class="overlay" on:click>
     STATS
+    {$game.calculateWPM()} WPM
+    {$game.calculateAccuracy().toFixed(2)}% ACC
+
+    {#if ($game.state === "ended")}
+        done
+    {/if}
 </button>
 {/if}

@@ -584,13 +584,8 @@ export const tests = [
     {
         content: `async function fetchData(url: string): Promise<any> {
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return await response.json();
+        fetch(url)
       } catch (error) {
-        console.error('Fetch error:', error);
         throw error;
       }
     }`,
@@ -599,17 +594,8 @@ export const tests = [
         mode: "patterns",
     },
     {
-        content: `class Singleton {
-      private static instance: Singleton;
-      
+        content: `class User {
       private constructor() {}
-      
-      public static getInstance(): Singleton {
-        if (!Singleton.instance) {
-          Singleton.instance = new Singleton();
-        }
-        return Singleton.instance;
-      }
     }`,
         description: "Singleton pattern in TypeScript.",
         language: "typescript",
@@ -777,7 +763,7 @@ export const tests = [
         }
     }`,
         description: "Error handling pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -814,7 +800,7 @@ export const tests = [
         }
     }`,
         description: "Struct and slice of structs pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -835,7 +821,7 @@ export const tests = [
         fmt.Println(fibonacci(10))
     }`,
         description: "Fibonacci sequence pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -858,7 +844,7 @@ export const tests = [
         mapExample()
     }`,
         description: "Map iteration pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -875,7 +861,7 @@ export const tests = [
         fmt.Println("Timer expired")
     }`,
         description: "Timer pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -898,7 +884,7 @@ export const tests = [
         wg.Wait()
     }`,
         description: "WaitGroup pattern for goroutines in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -917,7 +903,7 @@ export const tests = [
         }
     }`,
         description: "Select statement pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -932,7 +918,7 @@ export const tests = [
         }
     }`,
         description: "Range loop pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -945,7 +931,7 @@ export const tests = [
         fmt.Println("This will be printed first")
     }`,
         description: "Defer statement pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -963,7 +949,7 @@ export const tests = [
         fmt.Println(p)
     }`,
         description: "Struct initialization pattern in Go.",
-        language: "go",
+        language: "golang",
         mode: "patterns",
     },
     {
@@ -1104,6 +1090,157 @@ export const tests = [
     print(p.__dict__)`,
         description: "Class initialization pattern in Python.",
         language: "python",
+        mode: "patterns",
+    },
+    {
+        content: `var x int`,
+        description: "Variable declaration in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `y := 10`,
+        description: "Short variable declaration in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `func add(a int, b int) int {
+        return a + b
+    }`,
+        description: "Function declaration in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `if x > 0 {
+        fmt.Println("Positive")
+    }`,
+        description: "If statement in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `for i := 0; i < 10; i++ {
+        fmt.Println(i)
+    }`,
+        description: "For loop in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `for index, value := range array {
+        fmt.Println(index, value)
+    }`,
+        description: "Range loop in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `if err != nil {
+        log.Fatal(err)
+    }`,
+        description: "Error handling in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `type Person struct {
+        Name string
+        Age  int
+    }`,
+        description: "Struct definition in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `func (p Person) Greet() string {
+        return "Hello, " + p.Name
+    }`,
+        description: "Method on struct in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `type Greeter interface {
+        Greet() string
+    }`,
+        description: "Interface definition in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `if greeter, ok := i.(Greeter); ok {
+        fmt.Println(greeter.Greet())
+    }`,
+        description: "Type assertion in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `go func() {
+        fmt.Println("Hello from goroutine")
+    }()`,
+        description: "Goroutine in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `ch := make(chan int)`,
+        description: "Channel creation in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `ch <- 1`,
+        description: "Sending to channel in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `value := <-ch`,
+        description: "Receiving from channel in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `select {
+    case msg := <-ch:
+        fmt.Println(msg)
+    default:
+        fmt.Println("No message received")
+    }`,
+        description: "Select statement in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `defer fmt.Println("Done")`,
+        description: "Defer statement in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from panic:", r)
+        }
+    }()
+    panic("Something went wrong")`,
+        description: "Panic and recover in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `import "fmt"`,
+        description: "Import statement in Go.",
+        language: "golang",
+        mode: "patterns",
+    },
+    {
+        content: `package main`,
+        description: "Package declaration in Go.",
+        language: "golang",
         mode: "patterns",
     }
 ];
